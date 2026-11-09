@@ -457,6 +457,14 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
 .linkbtn{color:var(--red-text);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 #provHint .steps{margin:10px 0 0;padding-left:20px}
 #provHint .steps li{margin-bottom:6px}
+.launch-by{display:block;margin-top:16px;font-family:var(--f-cond);font-size:14px;letter-spacing:.18em;text-transform:lowercase;color:#8f8678;animation:rise .8s .8s both}
+.madeby{display:block;margin-top:2px;font-family:var(--f-cond);font-size:14px;color:var(--faint)}
+.pol-tabs{flex:none;padding:0 18px 10px;border-bottom:1px solid var(--line)}
+.policy h4{margin:18px 0 6px;font-family:var(--f-title);font-weight:400;font-size:20px}
+.policy p,.policy li{font-size:14.5px;line-height:1.55;color:var(--muted)}
+.policy p{margin:0 0 8px}
+.policy ul{margin:0 0 8px;padding-left:20px}
+.policy a{color:var(--red-text);font-weight:600}
 .toast{position:absolute;left:14px;right:14px;bottom:84px;z-index:70;min-height:52px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-radius:8px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14.5px;box-shadow:var(--shadow);transform:translateY(16px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .toast.show{transform:none;opacity:1;pointer-events:auto}
 .toast button{height:38px;padding:0 12px;border-radius:6px;font-family:var(--f-cond);font-weight:700;font-size:16px;color:var(--toast-btn)}
@@ -535,7 +543,7 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
 
 <div class="launch" id="launch" aria-hidden="true">
   <img id="launchArt" class="art" src="" alt="">
-  <div class="launch-mark"><b>VEX</b><span>Every inbox. One place.</span>
+  <div class="launch-mark"><b>VEX</b><span>Every inbox. One place.</span><small class="launch-by">made by beedown</small>
     <div class="gate" id="gate" hidden>
       <p id="gateText">Sign in with your Claude account to keep VEX in sync on your phone and, later, your computer.</p>
       <button class="btn pri" id="gateIn" type="button">Sign in with Claude</button>
@@ -763,6 +771,11 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
         <button class="btn pri" id="impSub" type="button">Add calendar</button>
       </div>
     </div>
+  </section>
+  <section class="sheet" id="policySheet" aria-label="Privacy policy and terms">
+    <div class="hd"><h3>Privacy and terms</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="pol-tabs"><div class="seg wide" id="polTabs"></div></div>
+    <div class="bd policy" id="polBody"></div>
   </section>
   <div class="toast" id="toast" role="status"><span id="toastMsg"></span><span class="sp"></span><button type="button" id="toastUndo">Undo</button></div>
 </div>
@@ -1215,7 +1228,8 @@ function renderSettings() {
     <div class="set-group"><div class="keys"><kbd>/</kbd><span>Search</span><kbd>c</kbd><span>Compose</span><kbd>j / k</kbd><span>Next or previous email</span><kbd>e</kbd><span>Archive</span><kbd>s</kbd><span>Star</span><kbd>u</kbd><span>Mark unread</span><kbd>r</kbd><span>Reply</span><kbd>Esc</kbd><span>Back</span></div></div>
     ${LIVE ? "" : `<div class="set-h">Sample inbox</div>
     <div class="set-group"><div class="opt"><span>Start over with the sample emails</span><button class="btn sm" type="button" data-act="reset">Reset</button></div></div>`}
-    <div class="about"><img src="${esc($(".brand img").src)}" alt=""><div><b>VEX Mail</b><span>Every inbox. One place.</span></div></div>`;
+    <div class="about"><img src="${esc($(".brand img").src)}" alt=""><div><b>VEX Mail</b><span>Every inbox. One place.</span><span class="madeby">Made by beedown${NATIVE && NATIVE.appBuild ? `, build ${esc(NATIVE.appBuild())}` : ""}</span></div></div>
+    <div class="set-group" style="margin-top:14px"><div class="opt"><span>Privacy policy</span><button class="btn sm" type="button" data-act="policy">Read</button></div><div class="opt"><span>Terms of use</span><button class="btn sm" type="button" data-act="terms">Read</button></div></div>`;
 }
 
 /* ================= toast + undo ================= */
@@ -1348,6 +1362,8 @@ function laterAction(act, id) {
   else if (act === "perms") openPermissions();
   else if (act === "install") openInstall();
   else if (act === "guide") openGuide();
+  else if (act === "policy") openPolicy("privacy");
+  else if (act === "terms") openPolicy("terms");
   else if (act === "connect") openConnect();
   else if (act === "acctedit") openAcctEdit(id);
   else if (act === "update") installUpdate(false);
@@ -2654,6 +2670,51 @@ $("#updateX").addEventListener("click", () => { $("#updateBar").hidden = true; }
 function maybeCheckForUpdate() { if (CAN_UPDATE && Date.now() - (S.prefs.lastUpdateCheck || 0) > 6 * H) checkForUpdate(false); }
 document.addEventListener("visibilitychange", () => { if (!document.hidden) maybeCheckForUpdate(); });
 
+
+/* ================= privacy policy and terms ================= */
+const POLICY_DATE = "November 9, 2026";
+const POLICY = {
+  privacy: `<p class="hint">Last updated ${POLICY_DATE}</p>
+    <p>VEX is made by beedown. In short: VEX has no servers and no ads, it doesn’t track you, and beedown never sees your email, passwords or calendar. Everything stays on your device.</p>
+    <h4>Your email accounts</h4>
+    <p>When you connect an email address, you give VEX the address and an app password. They’re saved only on your device: on Android in VEX’s private app storage, which isn’t included in phone backups, and on Windows encrypted with Windows’ own protection. VEX uses them only to connect straight to your email provider, like Gmail or Yahoo, over an encrypted connection. Remove an account in Settings and its password is deleted.</p>
+    <h4>Your emails</h4>
+    <p>VEX downloads your newest emails straight from your provider and keeps a copy on your device so it can show them, sort them and search them. Reading, starring, archiving, deleting and sending go straight to your provider. Your emails are never sent anywhere else.</p>
+    <h4>Your calendar and plans</h4>
+    <p>Your calendar, plans and settings are saved on your device. If you add a calendar link, VEX downloads that calendar straight from the link’s address.</p>
+    <h4>Who VEX talks to</h4>
+    <ul><li>Your email providers, to get and send your mail.</li><li>Calendar links you add.</li><li>GitHub, to check for and download VEX updates.</li><li>Google Fonts, to load VEX’s fonts.</li></ul>
+    <p>Like any website, these services can see your device’s internet address when VEX connects. Their own privacy policies apply to that.</p>
+    <h4>What VEX doesn’t do</h4>
+    <p>No VEX account, no ads, no analytics or trackers, and no selling or sharing of your data. VEX’s smart features, like sorting, predictions and planning, all run on your device.</p>
+    <h4>The version inside Claude</h4>
+    <p>If you use VEX through its Claude link and sign in with your Claude account, your VEX settings and sample data sync through that account, and Anthropic’s privacy policy applies to it.</p>
+    <h4>Deleting your data</h4>
+    <p>Remove email accounts in Settings, remove calendars under Calendar, then Plan. Uninstalling VEX deletes everything it saved on your device.</p>
+    <h4>Questions</h4>
+    <p>Open an issue on <a href="https://github.com/${UPDATE_REPO}/issues">VEX’s GitHub page</a>. If this policy changes, the new version comes with a VEX update and the date above changes.</p>`,
+  terms: `<p class="hint">Last updated ${POLICY_DATE}</p>
+    <p>VEX is a free app made by beedown. By using it, you agree to these terms.</p>
+    <h4>Use it fairly</h4>
+    <p>Use VEX for your own email and calendar. Don’t use it to send spam or for anything illegal, and follow your email provider’s rules.</p>
+    <h4>Your accounts</h4>
+    <p>You’re responsible for your email accounts and app passwords. If you think an app password got out, delete it in your email account’s security settings and make a new one.</p>
+    <h4>No guarantees</h4>
+    <p>VEX is provided as it is, without any warranty. beedown does its best, but VEX might have bugs, and features can stop working if email providers change their rules. Keep important emails in your email account, not only in VEX. beedown isn’t liable for lost emails or other damage from using VEX, as far as the law allows.</p>
+    <h4>Other companies</h4>
+    <p>VEX isn’t made by or connected to Google, Microsoft, Yahoo, Apple or Anthropic. Their names belong to them.</p>
+    <h4>Changes</h4>
+    <p>These terms can change with VEX updates. The date above shows when they last changed.</p>`
+};
+function openPolicy(which) {
+  const paint = w => {
+    $("#polTabs").innerHTML = [["privacy", "Privacy policy"], ["terms", "Terms of use"]].map(([k, l]) => `<button type="button" data-pol="${k}" class="${w === k ? "on" : ""}">${l}</button>`).join("");
+    $("#polBody").innerHTML = POLICY[w]; $("#polBody").scrollTop = 0;
+  };
+  paint(which || "privacy"); openSheet("#policySheet");
+  $("#polTabs").onclick = e => { const b = e.target.closest("[data-pol]"); if (b) paint(b.dataset.pol); };
+}
+
 /* ================= sign-in and sync with your Claude account ================= */
 const Sync = { status: "off", me: null, ref: null, unsub: null, src: Math.random().toString(36).slice(2), applied: 0, writing: false, again: false, timer: null, last: 0 };
 const cl = () => (window.claude && typeof window.claude.use === "function") ? window.claude : null;
@@ -2767,7 +2828,7 @@ function guideSteps() {
   steps.push({ title: "How to use it", html: `<ul><li><b>Swipe right</b> to archive and <b>left</b> to snooze. Change both in Settings.</li><li><b>Press and hold</b> an email to select several at once.</li><li><b>Pull down</b> on the inbox to check for new mail.</li><li><b>In search</b>, tap ${icon("tab")} or press Tab to accept the faded prediction.</li><li><b>While writing</b>, tap a word chip to finish your sentence.</li></ul>` });
   steps.push(BUILD === "claude"
     ? { title: "Sync your inbox", html: `<p>Sign in with your Claude account to keep VEX the same on all your devices.</p>${Sync.status === "on" ? `<p><b>You’re signed in.</b></p>` : `<button class="btn pri" type="button" data-act="signin">Sign in</button>`}<p>These are sample emails. Connect Gmail or Microsoft 365 in chat to see your real inbox.</p>` }
-    : { title: "Your mail stays here", html: `<p>VEX saves your mail and settings on this ${DEVICE}.</p>${NATIVE ? (LIVE ? `<p><b>Your inbox is connected.</b> ${PC ? "Click the refresh button at the top to check for mail." : "Pull down to check for mail."}</p>` : `<p>These are sample emails. Connect Gmail, Yahoo, iCloud or another inbox to see your real mail.</p><button class="btn pri" type="button" data-act="connect">Connect your email</button>`) : `<p>These are sample emails. Connecting your real inbox works in the VEX Android app.</p>`}` });
+    : { title: "Your mail stays here", html: `<p>VEX saves your mail and settings on this ${DEVICE}. It has no servers, no ads and no trackers. Read the full privacy policy in Settings.</p>${NATIVE ? (LIVE ? `<p><b>Your inbox is connected.</b> ${PC ? "Click the refresh button at the top to check for mail." : "Pull down to check for mail."}</p>` : `<p>These are sample emails. Connect Gmail, Yahoo, iCloud or another inbox to see your real mail.</p><button class="btn pri" type="button" data-act="connect">Connect your email</button>`) : `<p>These are sample emails. Connecting your real inbox works in the VEX Android app.</p>`}` });
   return steps;
 }
 let gIdx = 0;

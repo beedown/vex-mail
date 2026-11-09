@@ -1,191 +1,73 @@
+<p align="center"><img src="icon-512.png" width="128" alt="VEX icon"></p>
+
 # VEX Mail
 
-Every inbox in one place, sorted by what needs you.
+**Every inbox. One place.** A dark, fast email app with a smart calendar, made by beedown.
 
-## Update VEX or set it up
+## What VEX does
 
-1. Click **Add file**, then **Upload files**. Drag in all the VEX files (not the folder), then click **Commit changes**.
-2. Only when Claude gives you a new build file: open `.github/workflows/main.yml`, click the pencil, replace everything with the box at the bottom of this page, and click **Commit changes** twice.
-3. Open **Actions** and wait for a green check.
-4. On your Android phone, open this repository's **Releases** page, tap **VEX.apk** under the newest build, and install it over the old one. Your mail stays.
+- **All your email in one inbox.** Connect Gmail, Yahoo, iCloud and most other email services, with as many addresses as you like. Name and color each one, read them together or one at a time, and pick which address to send from.
+- **Sorts itself.** Every email gets tagged Needs reply, Waiting on, FYI or Junk. Dates in emails turn into due dates, reminders and calendar events.
+- **Search that predicts what you type.** It suggests people, words and filters as you type, fixes typos, and learns what you pick.
+- **Smart calendar.** Paste your school timetable, in English or Dutch, or add a calendar link from Google Calendar, Smartschool or Outlook. Then tell VEX what you want to do, like gaming 5 times a week or 4 hours of study before a test, and it plans that into your free time.
+- **Quality of life.** Swipe to archive or snooze, undo send, send later, reminders when nobody replies, saved drafts, and keyboard shortcuts on PC.
+- **Yours to style.** Six accent colors, three title fonts, sharp or soft corners, and five original etched art scenes.
+- **Private.** No ads, no trackers and no VEX servers. Your email goes straight between your device and your email provider.
 
-Red ✗? Click it, click **apk**, then the step with the ✗, and send a screenshot to Claude.
+## Download
+
+All downloads are on the [Releases page](https://github.com/beedown/vex-mail/releases).
+
+### Android phone (Android 8 or newer)
+
+1. On your phone, open the newest **VEX for Android** release and tap **VEX.apk**.
+2. If Chrome warns you about the file, tap **Download anyway**, then **Open**.
+3. If Android says it can't install apps from this source, tap **Settings**, turn on **Allow from this source**, and go back.
+4. Tap **Install**. If Play Protect shows a warning, tap **More details**, then **Install anyway**.
+
+Android shows these warnings for any app that doesn't come from the Play Store.
+
+### Windows PC
+
+1. Open the newest **VEX for PC** release and download **VEX-Setup.exe**.
+2. Open it. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**. Windows shows this for apps that don't have a paid signing certificate.
+3. VEX installs, opens, and adds itself to your Start menu and desktop.
+
+### iPhone
+
+There's no iPhone version of VEX yet.
+
+## Connect your email
+
+1. In VEX, open **Settings** and tap **Connect**.
+2. Pick your email provider, then enter your address and an **app password**. An app password is a separate password just for VEX, so you never type in your real one.
+   - **Gmail:** turn on 2-Step Verification in your Google account, then create an app password at myaccount.google.com/apppasswords.
+   - **Yahoo:** create an app password in your Yahoo account's security settings.
+   - **iCloud:** create an app-specific password in your Apple account.
+   - **Others:** choose **Other** and enter your provider's incoming (IMAP) and outgoing (SMTP) servers.
+
+**Hotmail and Outlook:** Microsoft no longer lets mail apps like VEX sign in with a password. You can still read your Hotmail in VEX by forwarding it to your Gmail. The **Hotmail** tab in Connect shows how.
 
 ## Smart calendar
 
-Open the **Calendar** tab. Tap **Import** to paste your school timetable (English or Dutch, or a copied table) or to add an iCal link from Google Calendar, Smartschool or Outlook, which stays up to date. Under **Plan**, add what you want to do, like gaming 5 times a week or 4 hours of study before an exam, and VEX fits it into your free time. You can also type things like "gaming 2h tonight" in the box at the top.
+1. Open the **Calendar** tab and tap **Import**.
+2. Paste your timetable or calendar text, or paste a calendar link (the iCal link from Google Calendar, Smartschool or Outlook).
+3. Under **Plan**, tap **Add something** and tell VEX what you want to fit in.
 
-## VEX for PC
+VEX plans around your fixed events. It puts homework and study before gaming, avoids late gaming on school nights, and spreads things out over the week. When your calendar changes, it plans again by itself. You can also type things like "gaming 2h tonight" or "voetbal elke woensdag 18u-19u30" in the box at the top.
 
-Every build makes two releases: **VEX for Android** (with VEX.apk) and **VEX for PC** (with VEX-Setup.exe). On your PC, open the newest **VEX for PC** release on the **Releases** page, download VEX-Setup.exe and open it. If Windows shows "Windows protected your PC", click **More info**, then **Run anyway**. VEX installs, opens, and adds itself to your Start menu and desktop. Connect your email in **Settings**; you can use the same app password as on your phone. The PC version updates itself too.
+## Updates
 
-## Several email addresses
+VEX checks for new versions by itself when you open it and installs them. On Android, tap **Update** if Android asks. You can turn this off in **Settings**, under **App updates**.
 
-In VEX, open **Settings** and tap **Add email** to connect another address. Tap **Edit** next to any address to give it a name, like Work or School, and a color. Use the inbox button at the top to see one address at a time, and pick which address to send from when you write.
+## Privacy
 
-## Automatic updates
+VEX saves your email passwords, emails and calendar only on your device. It talks to your email providers, calendar links you add, GitHub (for updates) and Google Fonts, and nothing else. Read the full [privacy policy and terms of use](PRIVACY.md).
 
-Once this version is installed, VEX checks this repository for new builds by itself. When it finds one, it downloads and installs it. The first time, Android asks you to allow VEX to install apps. After that, Android may ask you to tap **Update** for each new version. You can turn this off in VEX under **Settings**, then **App updates**.
+## Help and feedback
 
-## Connect your real email
+Found a bug or have an idea? [Open an issue](https://github.com/beedown/vex-mail/issues).
 
-In VEX, open **Settings** and tap **Connect**. Gmail, Yahoo and iCloud need an **app password** instead of your normal password:
+## Made by beedown
 
-- **Gmail:** turn on 2-Step Verification in your Google account, then create an app password at myaccount.google.com/apppasswords.
-- **Yahoo:** create one in your Yahoo account's security settings.
-- **iCloud:** create an app-specific password in your Apple account.
-
-Hotmail and Outlook can't sign in with a password anymore (Microsoft's rule). Forward your Hotmail to your Gmail to read it in VEX; the Hotmail tab in Connect shows how. Your password is saved only on your device.
-
-## The build file
-
-```yaml
-name: Build VEX for Android and PC
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get the VEX files
-        uses: actions/checkout@v4
-
-      - name: Check the VEX files are in the right place
-        run: |
-          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
-            if [ ! -f "$f" ]; then
-              echo "::error::$f is missing from the top of the repository. Upload all the VEX files, not the folder they are in."
-              exit 1
-            fi
-          done
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Set up the Android tools
-        run: |
-          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
-          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          "$SDK/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.7"
-
-      - name: Put the Android project together
-        run: |
-          set -e
-          A=android/app/src/main
-          mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26"
-          cp settings.gradle gradle.properties android/
-          cp project-build.gradle android/build.gradle
-          cp app-build.gradle android/app/build.gradle
-          cp vex.keystore android/app/vex.keystore
-          cp AndroidManifest.xml "$A/AndroidManifest.xml"
-          cp MainActivity.java MailBridge.java "$A/java/com/vexmail/app/"
-          cp index.html "$A/assets/index.html"
-          cp icon-maskable-512.png "$A/res/drawable-nodpi/vex_foreground.png"
-          cat > "$A/res/mipmap-anydpi-v26/ic_launcher.xml" <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-              <background android:drawable="@android:color/black" />
-              <foreground android:drawable="@drawable/vex_foreground" />
-          </adaptive-icon>
-          EOF
-
-      - name: Build the APK
-        working-directory: android
-        run: gradle assembleRelease --no-daemon --stacktrace
-
-      - name: Keep VEX.apk for the release
-        run: cp android/app/build/outputs/apk/release/app-release.apk VEX.apk
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: android
-          path: VEX.apk
-
-  pc:
-    runs-on: windows-latest
-    steps:
-      - name: Get the VEX files
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Put the PC app together
-        shell: bash
-        run: |
-          set -e
-          for f in index.html icon-512.png pc-main.js pc-preload.js pc-package.json; do
-            if [ ! -f "$f" ]; then echo "::error::$f is missing from the top of the repository."; exit 1; fi
-          done
-          mkdir -p pc-app
-          cp index.html pc-app/index.html
-          cp icon-512.png pc-app/icon.png
-          cp pc-main.js pc-app/main.js
-          cp pc-preload.js pc-app/preload.js
-          cp pc-package.json pc-app/package.json
-          echo "{\"build\": ${GITHUB_RUN_NUMBER}}" > pc-app/build-number.json
-
-      - name: Build VEX-Setup.exe
-        working-directory: pc-app
-        shell: bash
-        run: |
-          npm install --no-audit --no-fund
-          npx electron-builder --win nsis --publish never -c.extraMetadata.version=1.${GITHUB_RUN_NUMBER}.0
-
-      - name: Keep VEX-Setup.exe for the release
-        shell: bash
-        run: cp pc-app/dist/VEX-Setup.exe VEX-Setup.exe
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: pc
-          path: VEX-Setup.exe
-
-  release:
-    needs: [android, pc]
-    if: ${{ always() && (needs.android.result == 'success' || needs.pc.result == 'success') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: out
-          merge-multiple: true
-
-      - name: Publish VEX for PC
-        if: ${{ needs.pc.result == 'success' }}
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: pc-${{ github.run_number }}
-          name: VEX for PC ${{ github.run_number }}
-          body: "For Windows: download VEX-Setup.exe and open it."
-          files: out/VEX-Setup.exe
-          make_latest: false
-
-      - name: Publish VEX for Android
-        if: ${{ needs.android.result == 'success' }}
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: android-${{ github.run_number }}
-          name: VEX for Android ${{ github.run_number }}
-          body: "For your Android phone: open this page on your phone, tap VEX.apk, then open the file to install VEX."
-          files: out/VEX.apk
-          make_latest: true
-```
+VEX is made by beedown. It isn't made by or connected to Google, Microsoft, Yahoo, Apple or Anthropic.
