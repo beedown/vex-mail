@@ -558,6 +558,26 @@ details.alt summary{cursor:pointer;color:var(--muted);font-size:14px}
 .keypad button svg{width:26px;height:26px}
 .keypad button[hidden]{visibility:hidden;display:grid}
 .lock .linkbtn{margin-top:8px}
+.qa-card{margin:8px 4px 4px;padding:12px 14px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface)}
+.qa-head{display:flex;align-items:center;gap:12px}
+.qa-head .g-ic{width:38px;height:38px}
+.qa-what{min-width:0}
+.qa-what b{display:block;font-size:16px}
+.qa-what small{color:var(--muted);font-size:13px}
+.qa-best{margin:10px 0 2px;font-family:var(--f-title);font-size:21px}
+.qa-best b{font-weight:400}
+.qa-why,.qa-warn{display:flex;gap:8px;margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+.qa-why svg,.qa-warn svg{flex:none;width:16px;height:16px;margin-top:1px;color:var(--red-text)}
+.qa-warn{color:var(--ink)}
+.qa-alts,.qa-ex{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.qa-ex{margin:8px 4px 4px}
+.qa-alts span{font-size:13.5px;color:var(--muted)}
+.qa-follow{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px}
+.qa-follow input{width:18px;height:18px;accent-color:var(--red)}
+.qa-actions{display:flex;align-items:center;gap:10px;margin-top:12px}
+.chip{height:32px;padding:0 12px;border-radius:16px;border:1px solid var(--line-2);background:var(--surface-2);font-size:13.5px;color:var(--ink)}
+.chip:hover,.chip:focus-visible{border-color:var(--red)}
+.sharp .qa-card,.sharp .chip{border-radius:0}
 .toast{position:absolute;left:14px;right:14px;bottom:84px;z-index:70;min-height:52px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-radius:8px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14.5px;box-shadow:var(--shadow);transform:translateY(16px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .toast.show{transform:none;opacity:1;pointer-events:auto}
 .toast button{height:38px;padding:0 12px;border-radius:6px;font-family:var(--f-cond);font-weight:700;font-size:16px;color:var(--toast-btn)}
@@ -1907,64 +1927,6 @@ function parsePaste(text, ref = Date.now()) {
   return { kind: events.some(e => e.rrule) ? "timetable" : "list", events };
 }
 
-/* ---------- quick add: "gaming 2h tonight", "voetbal elke woensdag 18u-19u30" ---------- */
-function quickParse(text, ref = Date.now()) {
-  let work = " " + text + " "; const low0 = text.toLowerCase();
-  const take = m => { if (m) work = work.replace(new RegExp(escRe(m[0]), "i"), " "); return m; };
-  const r = { title: "", cat: guessCat(low0), dur: null, day: null, startMin: null, endMin: null, weekly: null, evening: false, valid: !!text.trim() };
-  let m;
-  const rg = matchRange(work);
-  if (rg) { take([rg.text]); r.startMin = rg.s; r.endMin = rg.e; }
-  else if ((m = take(work.match(/\b(?:at|om|@)\s*(\d{1,2})(?:[:.hu](\d{2})?)?\s*(am|pm)?(?!\s*(?:hours?|uur|min))/i)))) r.startMin = toMin(m[1], m[2], m[3] || (+m[1] <= 7 ? "pm" : null));
-  else if ((m = take(work.match(/\b(\d{1,2})[:.](\d{2})\b|\b(\d{1,2})u(\d{2})\b/i)))) r.startMin = m[1] != null ? toMin(m[1], m[2]) : toMin(m[3], m[4]);
-  else if ((m = take(work.match(/\b(\d{1,2})\s*(am|pm)\b/i)))) r.startMin = toMin(m[1], 0, m[2]);
-  else if ((m = work.match(/\b(\d{1,2})u\b(?!\s*\d)/i)) && +m[1] > 4) { take(m); r.startMin = toMin(m[1], 0); }
-  if ((m = take(work.match(/\b(\d+(?:[.,]\d+)?)\s*(?:h|u|uur|hours?|hrs?)\s*(\d{1,2})?\s*(?:m|min|minuten|minutes)?\b/i)))) r.dur = Math.round(parseFloat(m[1].replace(",", ".")) * 60 + (+m[2] || 0));
-  else if ((m = take(work.match(/\b(\d{1,3})\s*(?:m|min|mins|minutes|minuten)\b/i)))) r.dur = +m[1];
-  if ((m = take(work.match(/\b(?:every|elke|iedere)\s+(day|dag|weekday|weekdag|monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/i)))) {
-    const w = m[1].toLowerCase(); r.weekly = /^(day|dag)$/.test(w) ? [0, 1, 2, 3, 4, 5, 6] : /^week/.test(w) ? [1, 2, 3, 4, 5] : [WD[w]];
-  }
-  const today = dayStart(ref);
-  if ((m = take(work.match(/\b(tonight|vanavond)\b/i)))) { r.day = today; r.evening = true; }
-  else if ((m = take(work.match(/\b(today|vandaag)\b/i)))) r.day = today;
-  else if ((m = take(work.match(/\b(day after tomorrow|overmorgen)\b/i)))) r.day = addDays(today, 2);
-  else if ((m = take(work.match(/\b(tomorrow|morgen)\b/i)))) r.day = addDays(today, 1);
-  else if ((m = take(work.match(/\b(?:(next|volgende)\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/i)))) {
-    r.day = nextWeekday(WD[m[2].toLowerCase()], ref); if (m[1] && r.day - today < 7 * D && r.day !== today) r.day = addDays(r.day, 7);
-  } else { const dt = findDate(work, ref); if (dt) { take([dt.text]); r.day = dt.t; } }
-  if (r.weekly && r.day == null) r.day = nextWeekday(r.weekly[0], ref);
-  work = work.replace(/\b(for|voor|at|om|on|op|in the|de|het|een|a|an)\b/gi, " ");
-  const t = cleanTitle(work);
-  r.title = t ? t[0].toUpperCase() + t.slice(1) : catOf(r.cat).name;
-  if (r.startMin != null && r.endMin != null && r.endMin <= r.startMin) r.endMin = r.startMin + 60;
-  return r;
-}
-function describeQuick(q) {
-  if (!q || !q.valid) return "";
-  const dayTxt = q.weekly ? (q.weekly.length === 7 ? "every day" : q.weekly.length === 5 ? "every weekday" : `every ${dayName(nextWeekday(q.weekly[0], Date.now()), "long")}`) : q.day != null ? dayTitle(q.day) : "";
-  const timeTxt = q.startMin != null ? `${pad2(Math.floor(q.startMin / 60))}:${pad2(q.startMin % 60)}${q.endMin != null || q.dur ? "–" + (() => { const e = q.endMin ?? q.startMin + (q.dur || 60); return `${pad2(Math.floor(e / 60) % 24)}:${pad2(e % 60)}`; })() : ""}` : q.evening ? "tonight, at a free time" : "at the best free time";
-  return `${catOf(q.cat).name}: <b>${esc(q.title)}</b>, ${esc([dayTxt, timeTxt].filter(Boolean).join(", "))}${q.startMin == null ? ` <em>(VEX picks the time)</em>` : ""}${q.dur && q.startMin == null ? `, ${fmtDur(q.dur)}` : ""}`;
-}
-function quickAdd(text) {
-  const q = quickParse(text); if (!q.valid) return;
-  if (q.startMin != null) {
-    const day = q.day ?? (atMin(dayStart(Date.now()), q.startMin) < Date.now() ? addDays(dayStart(Date.now()), 1) : dayStart(Date.now()));
-    const start = atMin(day, q.startMin), end = q.endMin != null ? atMin(day, q.endMin) : start + (q.dur || 60) * MIN;
-    const ev = { id: uid("e"), title: q.title, start, end, cat: q.cat, source: "manual", rrule: q.weekly ? { freq: "weekly", days: q.weekly } : null };
-    S.cal.events.push(ev); CAL.day = dayStart(start);
-    afterCalChange(); toast(`Added ${q.title}, ${dayWord(dayStart(start))} ${hm(start)}`, () => { S.cal.events = S.cal.events.filter(e => e.id !== ev.id); afterCalChange(); });
-    return;
-  }
-  const day = q.day ?? dayStart(Date.now()), mins = q.dur || 60;
-  const g = { id: "tmp", cat: q.cat, minutes: mins, when: q.evening ? "evening" : "any" };
-  const busy = new Map([[day, busyFor(day)]]);
-  const best = bestSlot({ g, from: day, to: addDays(day, 1) }, [day], busy, new Map(), new Map(), Date.now());
-  if (!best) { toast(`No free ${fmtDur(mins)} ${dayWord(day)}. Try another day.`); return; }
-  const item = { id: uid("p"), title: q.title, cat: q.cat, start: best.start, end: best.end, status: "locked" };
-  S.cal.plan.push(item); CAL.day = day;
-  afterCalChange(); toast(`${q.title} planned ${dayWord(day)} at ${hm(best.start)}`, () => { S.cal.plan = S.cal.plan.filter(p => p.id !== item.id); afterCalChange(); });
-}
-
 /* ---------- the planner ---------- */
 function busyFor(day) {
   const from = day, to = addDays(day, 1), out = [];
@@ -2193,7 +2155,7 @@ function renderCalendar() {
   const v = CAL.view;
   let h = `<div class="cal-top"><span class="seg">${[["day", "Day"], ["agenda", "Agenda"], ["plan", "Plan"], ["stats", "Stats"]].map(([k, l]) => `<button type="button" data-cal="view:${k}" class="${v === k ? "on" : ""}">${l}</button>`).join("")}</span><span class="sp"></span><button class="btn sm" type="button" data-cal="import">${icon("link")}Import</button></div>
     <div class="qa"><input class="field" id="qaInput" type="text" placeholder="Add something, like “gaming 2h tonight”" autocomplete="off" enterkeyhint="done" aria-label="Quick add"><button class="btn sm pri" type="button" data-cal="qa">Add</button></div>
-    <p class="qa-prev" id="qaPrev"></p>`;
+    <div id="qaPrev"></div>`;
   if (v === "day") h += weekStrip() + (CAL.day !== dayStart(Date.now()) ? `<div class="day-head"><b>${esc(dayTitle(CAL.day))}</b><button class="btn sm" type="button" data-cal="today">Today</button></div>` : "") + insightCard() + timeline(CAL.day);
   else if (v === "agenda") h += agenda();
   else if (v === "stats") h += statsView();
@@ -2206,7 +2168,6 @@ function renderCalendar() {
     const tl = $(".tl"); if (tl) { const target = CAL.day === dayStart(Date.now()) ? Date.now() - 90 * MIN : atMin(CAL.day, S.cal.settings.wake); const y = tl.offsetTop + (target - atMin(CAL.day, +tl.dataset.h0 * 60)) / H * 56 - 40; $("#scroller").scrollTop = Math.max(0, y); }
   }
 }
-function paintQuickPreview() { const qa = $("#qaInput"), p = $("#qaPrev"); if (!qa || !p) return; p.innerHTML = qa.value.trim() ? describeQuick(quickParse(qa.value)) : ""; }
 
 /* ---------- sheets: event, planned block, goal, import ---------- */
 function catChips(sel, attr) { return Object.entries(CATS).map(([k, c]) => `<button type="button" class="cchip${k === sel ? " on" : ""}" data-${attr}="${k}" style="--c:${c.color}">${icon(c.icon)}${c.name}</button>`).join(""); }
@@ -2229,6 +2190,7 @@ $("#evSave").addEventListener("click", () => {
   if (end <= start) end = start + H;
   const data = { title: name, start, end, allDay, cat: CAL.editing.cat, location: $("#evLoc").value.trim(), rrule: $("#evWeekly").checked ? { freq: "weekly", days: [new Date(start).getDay()] } : null };
   if (CAL.editing.id) Object.assign(S.cal.events.find(e => e.id === CAL.editing.id), data); else S.cal.events.push({ id: uid("e"), source: "manual", ...data });
+  if (!allDay) learnHabit(keyFor(name), start, (end - start) / MIN);
   CAL.day = dayStart(start); closeSheets(); afterCalChange(); toast(CAL.editing.id ? "Event saved" : "Event added");
 });
 $("#evDelete").addEventListener("click", () => {
@@ -2247,7 +2209,7 @@ function openPlanItem(id) {
 }
 function planAction(kind) {
   const p = S.cal.plan.find(x => x.id === CAL.editing.plan); if (!p) return; closeSheets();
-  if (kind === "done") { p.status = "done"; afterCalChange(true); toast("Done. Nice work."); }
+  if (kind === "done") { p.status = "done"; learnHabit(keyFor(p.title || (goalOf(p.goalId) || {}).name || ""), p.start, (p.end - p.start) / MIN); afterCalChange(true); toast("Done. Nice work."); }
   else if (kind === "skip") { p.status = "skipped"; afterCalChange(); toast(p.goalId ? "Skipped. VEX planned a new time." : "Removed"); }
   else if (kind === "lock") { p.status = "locked"; afterCalChange(true); toast("Locked in"); }
   else if (kind === "move") { p.status = "skipped"; afterCalChange(); const n = S.cal.plan.filter(x => x.goalId === p.goalId && x.status === "planned" && x.start > Date.now()).sort((a, b) => a.start - b.start)[0]; toast(n ? `Moved to ${dayWord(dayStart(n.start))} ${hm(n.start)}` : "No other free time found"); }
@@ -2338,7 +2300,7 @@ $("#listBody").addEventListener("click", e => {
   else if (k === "goal") a === "new" ? openGoal(null) : openGoal(a);
   else if (k === "replan") { const r = planWeek(); save(); render(); toast(r.placed ? `Replanned. ${plural(r.placed, "session")} placed.` : "Your plan is up to date"); }
   else if (k === "import") openImport();
-  else if (k === "qa") { const qa = $("#qaInput"); if (qa.value.trim()) { quickAdd(qa.value); qa.value = ""; paintQuickPreview(); } else qa.focus(); }
+  else if (k === "qa") { const qa = $("#qaInput"); if (qa.value.trim()) quickAdd(qa.value); else qa.focus(); }
   else if (k === "tip") { const g = S.cal.goals.find(x => x.cat === "gaming"); quickAdd(`${g ? g.name : "Gaming"} ${fmtDur(g ? g.minutes : 60).replace(" ", "")} tonight`); }
   else if (k === "unsub") { S.cal.subs = S.cal.subs.filter(s => s.id !== a); S.cal.events = S.cal.events.filter(ev => ev.source !== "sub:" + a); afterCalChange(); toast("Calendar removed"); }
   else if (k === "unpaste") { const src = `${a}:${extra}`; const removed = S.cal.events.filter(ev => ev.source === src); S.cal.events = S.cal.events.filter(ev => ev.source !== src); afterCalChange(); toast("Pasted calendar removed", () => { S.cal.events.push(...removed); afterCalChange(); }); }
@@ -2347,8 +2309,7 @@ $("#listBody").addEventListener("click", e => {
     openEvent(null, atMin(+b.dataset.day, Math.min(m, 23 * 60 + 30)));
   }
 });
-$("#listBody").addEventListener("input", e => { if (e.target.id === "qaInput") paintQuickPreview(); });
-$("#listBody").addEventListener("keydown", e => { if (e.target.id === "qaInput" && e.key === "Enter") { e.preventDefault(); if (e.target.value.trim()) { quickAdd(e.target.value); const qa = $("#qaInput"); if (qa) qa.value = ""; paintQuickPreview(); } } });
+$("#listBody").addEventListener("keydown", e => { if (e.target.id === "qaInput" && e.key === "Enter") { e.preventDefault(); if (e.target.value.trim()) quickAdd(e.target.value); } });
 $("#listBody").addEventListener("change", e => {
   const s = e.target.closest("[data-calset]"); if (!s || S.tab !== "cal") return;
   S.cal.settings[s.dataset.calset] = +s.value; afterCalChange(); toast("Planner updated");
@@ -2368,6 +2329,410 @@ function calFromMail(m, planIt) {
   toast(`Added to your calendar, ${dayWord(dayStart(start))}${dt.hasTime ? " " + hm(start) : ""}`, () => { S.cal.events = S.cal.events.filter(x => x.id !== ev.id); afterCalChange(); });
 }
 window.VEXCAL = { parsePaste, parseICS, quickParse, planWeek, occurrences, dayItems, freeSlots, busyFor };
+
+/* ================= the calendar assistant: built in, runs on your device, learns your habits ================= */
+const cap1 = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+const DAYS_RE = "monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag";
+// what VEX knows about everyday activities: category, usual length, sensible hours (weekday / weekend) and which days
+const ACTS = [
+  { key: "exam", re: /\b(exams?|examen|tests?|toets(en)?|quiz|overhoring|proefwerk|tentamen)\b/i, cat: "school", min: 60, kind: "exam", label: "Test" },
+  { key: "deadline", re: /\b(deadline|due|inleveren|indienen|hand(ing)? in|submit)\b/i, cat: "study", kind: "deadline", label: "Deadline" },
+  { key: "birthday", re: /\b(birthday|verjaardag|bday|jarig)\b/i, cat: "social", kind: "birthday", label: "Birthday" },
+  { key: "dentist", re: /\b(dentist|tandarts|orthodontist|beugel)\b/i, cat: "other", min: 45, win: [[540, 1020]], days: "weekday", kind: "appointment", label: "Dentist", why: "Dentists see people on weekdays during the day." },
+  { key: "doctor", re: /\b(doctor|dokter|huisarts|gp|hospital|ziekenhuis|physio|kine|kinesist|pharmacy|apotheek)\b/i, cat: "other", min: 30, win: [[510, 1050]], days: "weekday", kind: "appointment", label: "Doctor", why: "Doctors work on weekdays during the day." },
+  { key: "haircut", re: /\b(haircut|kapper|hairdresser|barber)\b/i, cat: "other", min: 45, win: [[570, 1080]], days: "notsun", kind: "appointment", label: "Haircut", why: "Hairdressers are open in the daytime, and most close on Sunday." },
+  { key: "meeting", re: /\b(meeting|vergadering|interview|sollicitatie|oudercontact)\b/i, cat: "other", min: 60, win: [[540, 1020]], days: "weekday", kind: "appointment", label: "Meeting", why: "Meetings usually happen on weekdays during the day." },
+  { key: "gaming", re: /\b(gam(e|es|ing)|gamen|fortnite|minecraft|roblox|valorant|league|lol|cod|call of duty|fifa|fc ?2\d|ps[45]|playstation|xbox|switch|steam|rocket league|apex|overwatch|gta)\b/i, cat: "gaming", min: 90, win: [[1080, 1290]], wwin: [[780, 1320]], label: "Gaming", why: "Evenings, after homework, are prime gaming time." },
+  { key: "study", re: /\b(study|studying|studeren|leren|homework|huiswerk|revise|revision|herhalen|taak|taken|opdracht|assignment|project|samenvatting|summary|essay|paper)\b/i, cat: "study", min: 60, win: [[930, 1170]], wwin: [[600, 1050]], label: "Study", why: "Right after school, while your head is still fresh." },
+  { key: "run", re: /\b(run|running|jog|jogging|joggen|lopen)\b/i, cat: "sport", min: 40, win: [[1050, 1230]], wwin: [[540, 720], [1020, 1200]], label: "Run", why: "A run fits well in the late afternoon." },
+  { key: "sport", re: /\b(football|soccer|voetbal|training|trainen|gym|fitness|basket(bal)?|tennis|padel|hockey|volley(bal)?|judo|karate|swim(ming)?|zwemmen|dans(en)?|dance|climbing|klimmen|sport(en)?|workout)\b/i, cat: "sport", min: 90, win: [[990, 1230]], wwin: [[600, 1080]], label: "Sport", why: "Late afternoon is when most training happens." },
+  { key: "movie", re: /\b(movie|film|cinema|bioscoop|netflix|series?|reeks|anime)\b/i, cat: "chill", min: 120, win: [[1170, 1380]], label: "Movie", why: "A movie fits best in the evening." },
+  { key: "party", re: /\b(party|feest(je)?|fuif|sleepover|logeerpartij)\b/i, cat: "social", min: 180, win: [[1140, 1410]], days: "weekend", label: "Party", why: "Parties are usually on a weekend evening." },
+  { key: "friends", re: /\b(hang ?out|friends?|vrienden|afspreken|meet ?up)\b/i, cat: "social", min: 120, win: [[930, 1260]], wwin: [[780, 1320]], label: "Friends", why: "After school or on the weekend is when friends are free." },
+  { key: "call", re: /\b(call|bellen|phone|facetime|videocall)\b/i, cat: "social", min: 20, win: [[1020, 1260]], label: "Call", why: "Evenings are good for a call." },
+  { key: "shopping", re: /\b(shopping|winkelen|groceries|boodschappen|mall)\b/i, cat: "chores", min: 60, win: [[600, 1080]], days: "notsun", label: "Shopping", why: "Shops are open in the daytime." },
+  { key: "chores", re: /\b(clean(ing)?|opruimen|kuisen|chores?|laundry|afwas|dishes|vacuum|stofzuigen)\b/i, cat: "chores", min: 45, win: [[960, 1140]], wwin: [[600, 1080]], label: "Chores", why: "Chores fit nicely before dinner." },
+  { key: "read", re: /\b(read|reading|lezen|book|boek)\b/i, cat: "chill", min: 45, win: [[1200, 1350]], label: "Reading", why: "Reading winds you down before bed." },
+  { key: "music", re: /\b(guitar|gitaar|piano|drums?|violin|viool|practice|practise|oefenen|muziekles|music lesson|singing|zingen)\b/i, cat: "other", min: 45, win: [[960, 1200]], label: "Practice", why: "Practice sticks best in the late afternoon." },
+  { key: "chill", re: /\b(chill|relax|rest|nap|dutje|ontspannen)\b/i, cat: "chill", min: 60, win: [[1140, 1320]], label: "Chill" }
+];
+const PARTS = { morning: [360, 720, "in the morning"], lunch: [720, 810, "at lunchtime"], afterschool: [930, 1080, "after school"], afternoon: [780, 1050, "in the afternoon"],
+  predinner: [960, 1080, "before dinner"], postdinner: [1140, 1290, "after dinner"], evening: [1080, 1350, "in the evening"], late: [1260, 1439, "late in the evening"] };
+const NUMW = { a: 1, an: 1, one: 1, een: 1, once: 1, two: 2, twee: 2, twice: 2, three: 3, drie: 3, thrice: 3, four: 4, vier: 4, five: 5, vijf: 5, six: 6, zes: 6, seven: 7, zeven: 7 };
+const STUDY_WORDS = /\b(study|studying|studeren|leren|learn|prepare|prep|voorbereiden|revise|herhalen)\b/i;
+
+/* ---------- habits: VEX learns when you like to do things ---------- */
+const keyFor = text => (ACTS.find(a => a.kind !== "exam" && a.kind !== "deadline" && a.re.test(text)) || {}).key || guessCat(text);
+function learnHabit(key, start, minutes) {
+  if (!key || !start) return;
+  const all = S.cal.habits || (S.cal.habits = {});
+  const h = all[key] || (all[key] = { h: Array(24).fill(0), d: Array(7).fill(0), dur: [], n: 0 });
+  const t = new Date(start); h.h[t.getHours()]++; h.d[t.getDay()]++; h.n++;
+  if (minutes > 0) { h.dur.push(Math.round(minutes)); if (h.dur.length > 12) h.dur.shift(); }
+}
+function habitBonus(key, m, wd) {
+  const h = S.cal.habits && S.cal.habits[key]; if (!h || h.n < 3) return 0;
+  const mx = Math.max(...h.h); if (!mx) return 0;
+  const hr = Math.min(23, Math.floor(m / 60)), v = h.h[hr] + .5 * ((h.h[hr - 1] || 0) + (h.h[hr + 1] || 0)), dmx = Math.max(...h.d);
+  return Math.min(35, v / mx * 28 + (dmx ? h.d[wd] / dmx * 7 : 0));
+}
+function habitPeak(key) { const h = S.cal.habits[key]; return h.h.indexOf(Math.max(...h.h)); }
+function habitDuration(key) { const h = S.cal.habits && S.cal.habits[key]; if (!h || h.dur.length < 2) return 0; const s = [...h.dur].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; }
+
+/* ---------- reading what you typed ---------- */
+function understand(text, ref = Date.now()) {
+  const raw = String(text || "").replace(/\s+/g, " ").trim(), today = dayStart(ref);
+  const u = { raw, valid: !!raw, title: "", cat: "other", key: "", act: null, minutes: 0, allDay: false, day: null, range: null, before: null, explicitDay: false,
+    startMin: null, endMin: null, part: null, days: null, count: 0, per: null, scope: null, location: "", mode: "flex", follow: [], subject: "", needDay: false };
+  if (!raw) return u;
+  let w = " " + raw.replace(new RegExp(`\\b(${DAYS_RE})(avond|middag|ochtend|morgen|nacht)\\b`, "gi"), "$1 $2") + " ";
+  const take = re => { const m = w.match(re); if (m) w = w.slice(0, m.index) + " " + w.slice(m.index + m[0].length); return m; };
+  u.act = ACTS.find(a => a.re.test(raw)) || null;
+  u.cat = u.act ? u.act.cat : guessCat(raw); u.key = u.act ? u.act.key : u.cat;
+  if (u.act && u.act.kind === "exam" && STUDY_WORDS.test(raw)) u.mode = "examprep";
+
+  // where
+  let m = take(/\b(?:in\s+)?(?:room|lokaal|zaal|lab)\s+[\w.-]+/i); if (m) u.location = m[0].replace(/^in\s+/i, "").trim();
+  m = take(new RegExp(`\\b(?:at|in|bij|op)\\s+(?:the |de |het )?((?!(?:${DAYS_RE}|${Object.keys(MONTHS).join("|")})\\b)[A-Z][\\w’'-]+(?:\\s+[A-Z][\\w’'-]+){0,2})`));
+  if (m && !u.location) u.location = m[1];
+
+  // how often
+  m = take(/\b(\d+|one|two|three|four|five|six|seven|een|twee|drie|vier|vijf|zes|zeven|twice|thrice|once)\s*(?:x|times|keer|maal)?\s*(a|per|each|every|this|next|deze|volgende|elke|in the|in de)\s+(week|day|dag)\b/i);
+  if (m) { u.count = +m[1] || NUMW[m[1].toLowerCase()] || 1; u.per = /day|dag/i.test(m[3]) ? "day" : "week"; u.scope = /this|deze/i.test(m[2]) ? "this" : /next|volgende/i.test(m[2]) ? "next" : "every"; }
+  if (take(/\b(every ?day|elke dag|iedere dag|daily|dagelijks)\b/i)) u.days = [0, 1, 2, 3, 4, 5, 6];
+  else if (take(/\b(every weekday|on weekdays|elke weekdag|doordeweeks|weekdays)\b/i)) u.days = [1, 2, 3, 4, 5];
+  else if (take(/\b(every weekend|elk weekend|on weekends|weekends)\b/i)) u.days = [6, 0];
+  else {
+    const plural = new RegExp(`\\b(mondays|tuesdays|wednesdays|thursdays|fridays|saturdays|sundays|maandagen|dinsdagen|woensdagen|donderdagen|vrijdagen|zaterdagen|zondagen)\\b`, "i");
+    if (/\b(every|elke|iedere)\s+/i.test(w) && new RegExp(`\\b(every|elke|iedere)\\s+(${DAYS_RE})`, "i").test(w) || plural.test(w)) {
+      const found = [...w.matchAll(new RegExp(`\\b(${DAYS_RE})(?:s|en)?\\b`, "gi"))].map(x => WD[x[1].toLowerCase()]);
+      u.days = [...new Set(found)];
+      w = w.replace(new RegExp(`\\b(every|elke|iedere|on|op)\\b`, "gi"), " ").replace(new RegExp(`\\b(${DAYS_RE})(?:s|en)?\\b`, "gi"), " ").replace(/\s(and|en|&|,)\s/gi, " ");
+    }
+  }
+
+  // parts of the day (some also set the day)
+  const parts = [[/\b(tomorrow morning|morgenvroeg|morgenochtend)\b/i, "morning", 1], [/\b(tonight|vanavond|this evening)\b/i, "evening", 0], [/\b(this morning|vanochtend|vanmorgen)\b/i, "morning", 0],
+    [/\b(this afternoon|vanmiddag)\b/i, "afternoon", 0], [/\b(tomorrow evening|tomorrow night|morgenavond)\b/i, "evening", 1], [/\b(tomorrow afternoon|morgenmiddag)\b/i, "afternoon", 1],
+    [/\b(after school|na school|na de lessen?)\b/i, "afterschool"], [/\b(at lunch(time)?|lunch(time)?|noon|middagpauze)\b/i, "lunch"],
+    [/\b(before dinner|voor het (avond)?eten)\b/i, "predinner"], [/\b(after dinner|na het (avond)?eten)\b/i, "postdinner"],
+    [/\b(in the morning|morning|ochtend|ochtends|voormiddag)\b/i, "morning"], [/\b(in the afternoon|afternoon|namiddag|middags|middag)\b/i, "afternoon"],
+    [/\b(in the evening|evening|avond|avonds)\b/i, "evening"], [/\b(late at night|at night|late|nachts)\b/i, "late"]];
+  for (const [re, part, dayOff] of parts) { if (take(re)) { u.part = part; if (dayOff != null) { u.day = addDays(today, dayOff); u.explicitDay = true; } break; } }
+  w = w.replace(/\s['’]s\s/g, " ");
+
+  // times
+  const rg = matchRange(w);
+  if (rg) { w = w.replace(rg.text, " "); u.startMin = rg.s; u.endMin = rg.e; }
+  else if ((m = take(/\b(?:at|om|@|from|vanaf|starting)\s*(\d{1,2})(?:[:.hu](\d{2})?)?\s*(am|pm|uur|u)?(?!\s*(?:hours?|uur(?:tjes)?\b(?!\s*['’]?s)|min))\b/i))) u.startMin = toMin(m[1], m[2], /am|pm/i.test(m[3] || "") ? m[3] : null), u.bareHour = !m[2] && !/am|pm/i.test(m[3] || "");
+  else if ((m = take(/\b(\d{1,2})[:.](\d{2})\b|\b(\d{1,2})u(\d{2})\b/i))) u.startMin = m[1] != null ? toMin(m[1], m[2]) : toMin(m[3], m[4]);
+  else if ((m = take(/\b(\d{1,2})\s*(am|pm)\b/i))) u.startMin = toMin(m[1], 0, m[2]);
+  else if ((m = w.match(/\b(\d{1,2})u\b(?!\s*\d)/i)) && +m[1] > 4) { take(m[0]); u.startMin = toMin(m[1], 0); u.bareHour = false; }
+  else if (take(/\b(at noon|om twaalf uur|om 12 uur 's middags)\b/i)) u.startMin = 720;
+
+  // how long
+  const durs = [[/\b(all day|whole day|full day|hele dag|de hele dag)\b/i, "all"], [/\b(an hour and a half|one and a half hours?|anderhalf uur|anderhalve uur)\b/i, 90],
+    [/\b(half an hour|half hour|half uur|halfuur|halfuurtje)\b/i, 30], [/\b(quarter of an hour|kwartier)\b/i, 15],
+    [/(?<!\b(?:at|om)\s)\b(an hour|one hour|een uur(tje)?)\b/i, 60], [/(?<!\b(?:at|om)\s)\b(two hours|twee uur(tjes)?)\b/i, 120], [/(?<!\b(?:at|om)\s)\b(three hours|drie uur)\b/i, 180]];
+  for (const [re, v] of durs) { if (take(re)) { if (v === "all") u.allDay = true; else u.minutes = v; break; } }
+  if (!u.minutes && !u.allDay) {
+    if ((m = take(/(?<!\b(?:at|om)\s)\b(\d+(?:[.,]\d+)?)\s*(?:h|hr|hrs|hours?|u|uur|uurtjes?)\s*(\d{1,2})?\s*(?:m|min|minutes|minuten)?\b(?![:.]\d)/i))) u.minutes = Math.round(parseFloat(m[1].replace(",", ".")) * 60 + (+m[2] || 0));
+    else if ((m = take(/\b(\d{1,3})\s*(?:m|min|mins|minutes|minuten)\b/i))) u.minutes = +m[1];
+  }
+
+  // when
+  if ((m = take(new RegExp(`\\b(?:before|by|until|voor|tegen|uiterlijk)\\s+(?:next\\s+|volgende\\s+)?(${DAYS_RE}|tomorrow|morgen|the weekend|het weekend)\\b`, "i")))) {
+    const k = m[1].toLowerCase(); u.before = /tomorrow|morgen/.test(k) ? addDays(today, 1) : /weekend/.test(k) ? nextWeekday(6, ref) : nextWeekday(WD[k], ref);
+    if (u.before === today) u.before = addDays(today, 7);
+  }
+  if (u.day == null) {
+    if (take(/\b(today|vandaag)\b/i)) u.day = today;
+    else if (take(/\b(day after tomorrow|overmorgen)\b/i)) u.day = addDays(today, 2);
+    else if (take(/\b(tomorrow|morgen)\b/i)) u.day = addDays(today, 1);
+    else if (take(/\b(next weekend|volgend weekend)\b/i)) { const sat = addDays(nextWeekday(6, ref), new Date(today).getDay() === 6 ? 7 : 0); u.range = [addDays(sat, 7), addDays(sat, 9)]; }
+    else if (take(/\b(this weekend|dit weekend|in the weekend|het weekend|weekend)\b/i)) { const wd = new Date(today).getDay(), sat = wd === 0 ? addDays(today, -1) : nextWeekday(6, ref); u.range = [Math.max(today, sat), addDays(sat, 2)]; }
+    else if (take(/\b(next week|volgende week)\b/i)) { const mon = addDays(weekStart(today), 7); u.range = [mon, addDays(mon, 7)]; }
+    else if (take(/\b(this week|deze week|later this week)\b/i)) u.range = [today, addDays(weekStart(today), 7)];
+    else if ((m = take(/\b(?:in|over)\s+(\d+|a|an|een|two|twee|three|drie)\s+(days?|dagen|weeks?|weken)\b/i))) { const n = +m[1] || NUMW[m[1].toLowerCase()] || 1; u.day = addDays(today, /week|weken/i.test(m[2]) ? n * 7 : n); }
+    else if (take(/\b(end of the week|eind van de week|einde van de week)\b/i)) u.day = nextWeekday(5, ref);
+    else if (take(/\b(end of the month|eind van de maand|einde van de maand)\b/i)) { const t = new Date(today); u.day = new Date(t.getFullYear(), t.getMonth() + 1, 0).getTime(); }
+    else if ((m = take(new RegExp(`\\b(?:(next|volgende)\\s+)?(${DAYS_RE})\\b`, "i")))) {
+      u.day = nextWeekday(WD[m[2].toLowerCase()], ref);
+      if (m[1] && u.day - today < 7 * D && u.day !== today) u.day = addDays(u.day, 7);
+      else if (m[1] && u.day === today) u.day = addDays(today, 7);
+    }
+    else if ((m = take(/\b(?:on\s+)?(?:the\s+|de\s+)?(\d{1,2})(?:st|nd|rd|th|e|ste|de)\b(?!\s*(?:h|u|uur|min))/i))) { const t = new Date(today); let d = new Date(t.getFullYear(), t.getMonth(), +m[1]).getTime(); if (d < today) d = new Date(t.getFullYear(), t.getMonth() + 1, +m[1]).getTime(); u.day = d; }
+    else { const dt = findDate(w, ref); if (dt) { take(new RegExp(escRe(dt.text))); u.day = dt.t; } }
+    if (u.day != null) u.explicitDay = true;
+  }
+
+  // hours like "at 8": pick the sensible half of the day
+  if (u.startMin != null && u.bareHour) {
+    const h = Math.floor(u.startMin / 60), pmPart = ["afternoon", "afterschool", "predinner", "postdinner", "evening", "late"].includes(u.part);
+    const wantsPm = u.part === "morning" ? false : pmPart || h <= 6 || (h <= 11 && u.act && u.act.win && u.act.win[0][0] >= 720);
+    if (h < 12 && wantsPm) u.startMin += 720;
+  }
+
+  // what kind of thing it is
+  u.minutes = u.minutes || habitDuration(u.key) || (u.act && u.act.min) || 60;
+  const kind = u.act && u.act.kind;
+  if (u.mode !== "examprep") {
+    if (kind === "birthday") u.mode = "birthday";
+    else if (kind === "deadline") u.mode = "deadline";
+    else if (u.count && u.per === "week" && u.scope !== "every") u.mode = "multi";
+    else if (u.count || (u.days && u.startMin == null)) u.mode = "goal";
+    else if (u.days) u.mode = "recurring";
+    else if (u.allDay) u.mode = "allday";
+    else if (u.startMin != null) u.mode = "fixed";
+    else if (kind === "exam") u.mode = u.day != null ? "allday" : "flex";
+  }
+  if ((u.mode === "examprep" || u.mode === "deadline" || u.mode === "birthday" || kind === "exam") && u.day == null && u.before != null) u.day = u.before;
+  if ((u.mode === "examprep" || u.mode === "deadline" || u.mode === "birthday") && u.day == null) u.needDay = true;
+
+  // the title
+  let t = w.replace(/\b(i|ik|need|have|has|got|must|want|wanna|wil|moet|gotta|going|gaan|ga|go|to|naar|remind me|herinner me|plan|schedule|add|zet|plannen|inplannen|for|voor|at|om|on|op|the|de|het|a|an|een|my|mijn|some|wat|please|aub|graag|from|van|till|until|tot|in)\b/gi, " ");
+  t = cleanTitle(t.replace(/\s+/g, " ").replace(/\s+([,.!?])/g, "$1")).replace(/^(and|en|with|met)\s+/i, "").replace(/\s+(and|en)$/i, "");
+  if (u.mode === "examprep" || kind === "exam") {
+    const subj = cleanTitle(t.replace(STUDY_WORDS, " ").replace(u.act.re, " ").replace(/\b(for|voor|my|mijn)\b/gi, " "));
+    u.subject = subj; u.title = cap1(subj ? `${subj} ${raw.match(u.act.re)[0].toLowerCase()}` : raw.match(u.act.re)[0]);
+  } else if (kind === "deadline") {
+    const subj = cleanTitle(t.replace(u.act.re, " ")); u.subject = subj || "work"; u.title = cap1(`${subj || "Work"} due`);
+  } else u.title = cap1(t) || (u.act ? u.act.label : catOf(u.cat).name);
+  if (u.mode === "examprep" || kind === "exam") u.follow.push({ id: "study", on: true, total: u.mode === "examprep" && u.minutes !== (u.act.min || 60) ? u.minutes : 180 });
+  if (kind === "deadline") u.follow.push({ id: "work", on: true, total: u.minutes && u.minutes !== 60 ? u.minutes : 120 });
+  if (kind === "birthday") u.follow.push({ id: "gift", on: false });
+  return u;
+}
+
+/* ---------- picking times that make sense ---------- */
+function dayAllowed(u, d) {
+  const wd = new Date(d).getDay(), rule = u.act && u.act.days;
+  if (u.days && !u.days.includes(wd)) return false;
+  if (rule === "weekday" && (wd === 0 || wd === 6)) return false;
+  if (rule === "weekend" && wd !== 0 && wd !== 6 && !u.explicitDay) return false;
+  if (rule === "notsun" && wd === 0) return false;
+  return true;
+}
+function learnedWindow(key) {
+  const h = S.cal.habits && S.cal.habits[key]; if (!h || h.n < 3) return null;
+  const peak = habitPeak(key) * 60; return [Math.max(0, peak - 60), Math.min(1439, peak + 150)];
+}
+function windowsFor(u, d) {
+  if (u.part) return [PARTS[u.part].slice(0, 2)];
+  const weekend = [0, 6].includes(new Date(d).getDay()), lw = learnedWindow(u.key);
+  const base = u.act && u.act.win ? (weekend && u.act.wwin ? u.act.wwin : u.act.win) : [[S.cal.settings.wake + 90, S.cal.settings.sleep - 30]];
+  return lw ? base.concat([lw]) : base;
+}
+function dayLoad(d) { return busyFor(d).reduce((s, [a, b]) => s + (b - a) / MIN, 0); }
+function scoreTime(u, d, s, len, wins, now) {
+  const m = minsOf(s), e = m + len / MIN, wd = new Date(d).getDay();
+  let sc = 100;
+  const inside = wins.some(([a, b]) => m >= a && e <= b + 1);
+  const dist = inside ? 0 : Math.min(...wins.map(([a, b]) => m < a ? a - m : Math.max(0, e - b)));
+  if (u.part) {
+    if (!inside) return -10000; sc += 60;
+    const own = u.act && u.act.win ? ([0, 6].includes(wd) && u.act.wwin ? u.act.wwin : u.act.win) : null;
+    if (own && own.some(([a, b]) => m >= a && e <= b + 1)) sc += 20;
+  } else sc += inside ? 40 : -Math.min(90, dist / 3);
+  sc += habitBonus(u.key, m, wd);
+  sc -= (d - dayStart(now)) / D * (u.act && u.act.kind === "appointment" ? 1.5 : u.cat === "study" || u.cat === "chores" ? 8 : 4);
+  sc -= dayLoad(d) * .03;
+  if (u.cat === "gaming" && wd <= 4 && e > 1320) sc -= 40;
+  if (u.cat === "study" && e > 1290) sc -= 30;
+  if (m < 480 && u.part !== "morning") sc -= 45;
+  if (m % 60 === 0) sc += 4; else if (m % 30 === 0) sc += 2;
+  return sc;
+}
+function candidateDays(u, now) {
+  const today = dayStart(now);
+  if (u.day != null) return dayAllowed(u, u.day) || u.explicitDay ? [u.day] : [];
+  let from = today, to = addDays(today, u.act && u.act.kind === "appointment" ? 15 : 8);
+  if (u.range) { from = Math.max(today, u.range[0]); to = u.range[1]; }
+  if (u.before != null) to = Math.min(to, u.before);
+  const out = [];
+  for (let d = from; d < to; d = addDays(d, 1)) if (dayAllowed(u, d)) out.push(d);
+  return out;
+}
+function freeAround(d, t) { return freeSlots(d, busyFor(d), 0).find(([a, b]) => a <= t && t < b); }
+function reasonFor(u, x) {
+  const bits = [], hb = habitBonus(u.key, minsOf(x.start), new Date(x.day).getDay());
+  const peak = S.cal.habits && S.cal.habits[u.key] && S.cal.habits[u.key].n >= 3 ? habitPeak(u.key) * 60 : null;
+  if (hb >= 10 && peak != null && Math.abs(minsOf(x.start) - peak) <= 90) bits.push(`You usually do this around ${pad2(peak / 60)}:00.`);
+  else if (u.part) bits.push(`${cap1(PARTS[u.part][2])}, like you asked.`);
+  else if (u.act && u.act.why) bits.push(u.act.why);
+  const f = freeAround(x.day, x.start);
+  if (f && f[1] - f[0] >= (x.end - x.start) + 30 * MIN) bits.push(`You’re free from ${hm(f[0])} to ${hm(f[1])}.`);
+  else bits.push("It fits right between your other plans.");
+  return bits.join(" ");
+}
+function suggestTimes(u, now = Date.now(), want = 3) {
+  const len = u.minutes * MIN, perDay = [];
+  for (const d of candidateDays(u, now)) {
+    const wins = windowsFor(u, d); let top = null;
+    for (const [a, b] of freeSlots(d, busyFor(d), now + 15 * MIN)) {
+      for (let s = a; s + len <= b; s += 15 * MIN) {
+        const sc = scoreTime(u, d, s, len, wins, now);
+        if (sc > -1000 && (!top || sc > top.score)) top = { start: s, end: s + len, score: sc, day: d };
+      }
+    }
+    if (top) perDay.push(top);
+  }
+  const out = perDay.sort((a, b) => b.score - a.score).slice(0, want).map(x => ({ ...x, why: reasonFor(u, x) }));
+  if (!out.length && u.part && !u.relaxed) {
+    const alt = suggestTimes({ ...u, part: null, relaxed: true, day: null, range: u.day != null ? [u.day, addDays(u.day, 3)] : u.range, explicitDay: false }, now, want);
+    return alt.map(x => ({ ...x, why: `Your ${PARTS[u.part][2].replace(/^(in the|at|after|before|late in the) /, "")} is full, so this is the next best time. ${x.why}` }));
+  }
+  return out;
+}
+function clashes(start, end) {
+  const d = dayStart(start);
+  return dayItems(d).filter(i => !i.allDay && i.start < end && i.end > start && !(i.kind === "plan" && (i.status === "skipped" || i.status === "missed")));
+}
+function fixedPlan(u, now = Date.now()) {
+  let day = u.day;
+  if (day == null) {
+    day = dayStart(now);
+    if (atMin(day, u.startMin) < now) day = addDays(day, 1);
+    for (let i = 0; i < 14 && !dayAllowed({ ...u, explicitDay: false }, day); i++) day = addDays(day, 1);
+  }
+  const start = atMin(day, u.startMin), end = u.endMin != null && u.endMin > u.startMin ? atMin(day, u.endMin) : start + u.minutes * MIN;
+  const clash = clashes(start, end);
+  let alt = null;
+  if (clash.length) {
+    const len = end - start, v = { ...u, minutes: len / MIN, startMin: null };
+    const best = suggestTimes({ ...v, day, explicitDay: true }, now, 1)[0] || suggestTimes({ ...v, day: null, range: [addDays(day, 1), addDays(day, 8)] }, now, 1)[0];
+    if (best) alt = { start: best.start, end: best.end };
+  }
+  return { start, end, clash, alt };
+}
+
+function spreadPick(list, count) {
+  const byScore = [...list].sort((a, b) => b.score - a.score), out = [];
+  for (const gap of [2, 1]) for (const x of byScore) if (out.length < count && !out.includes(x) && out.every(c => Math.abs(c.day - x.day) >= gap * D - 3 * H)) out.push(x);
+  return out.sort((a, b) => a.start - b.start);
+}
+/* ---------- turning it into calendar entries ---------- */
+function deadlineGoal(name, cat, day, total) {
+  return { id: uid("g"), name, cat, minutes: total >= 120 ? 60 : Math.max(30, total), perWeek: 0, when: "any", deadline: atMin(day, 8 * 60), totalMinutes: total };
+}
+function commitUnderstanding(u, pick = 0) {
+  const made = { events: [], plan: [], goals: [] }, now = Date.now();
+  const ev = (title, start, end, extra = {}) => { const e = { id: uid("e"), title, start, end, cat: u.cat, source: "assistant", location: u.location, ...extra }; S.cal.events.push(e); made.events.push(e.id); return e; };
+  const plan = (start, end) => { const p = { id: uid("p"), title: u.title, cat: u.cat, start, end, status: "locked" }; S.cal.plan.push(p); made.plan.push(p.id); return p; };
+  const appointment = u.act && u.act.kind === "appointment";
+  let summary = "", focusDay = null;
+  if (u.mode === "fixed") {
+    const f = fixedPlan(u, now), useAlt = pick === 1 && f.alt, s = useAlt ? f.alt.start : f.start, e = useAlt ? f.alt.end : f.end;
+    ev(u.title, s, e); learnHabit(u.key, s, (e - s) / MIN); focusDay = dayStart(s);
+    summary = `${u.title}, ${dayWord(dayStart(s))} at ${hm(s)}`;
+  } else if (u.mode === "recurring") {
+    const first = nextWeekday(u.days[0], now), s = atMin(first, u.startMin), e = u.endMin != null && u.endMin > u.startMin ? atMin(first, u.endMin) : s + u.minutes * MIN;
+    ev(u.title, s, e, { rrule: { freq: "weekly", days: u.days } }); learnHabit(u.key, s, (e - s) / MIN); focusDay = first;
+    summary = `${u.title}, every ${u.days.length === 7 ? "day" : u.days.map(d => dayName(nextWeekday(d, now), "long")).join(" and ")} at ${hm(s)}`;
+  } else if (u.mode === "allday" || u.mode === "birthday" || u.mode === "examprep" || u.mode === "deadline") {
+    if (u.day == null) { toast("Add when it is, like “friday” or “12/11”."); return false; }
+    const timed = u.startMin != null && u.mode !== "birthday" && u.mode !== "deadline";
+    const s = timed ? atMin(u.day, u.startMin) : u.day, e = timed ? s + u.minutes * MIN : addDays(u.day, 1);
+    ev(u.title, s, e, { allDay: !timed, cat: u.mode === "deadline" ? "study" : u.cat, rrule: u.mode === "birthday" ? { freq: "yearly" } : null }); focusDay = u.day;
+    summary = `${u.title}, ${dayWord(u.day)}${timed ? " at " + hm(s) : ""}`;
+  } else if (u.mode === "goal") {
+    const perWeek = u.days ? u.days.length : u.per === "day" ? 7 : u.count;
+    const when = u.part && ["morning", "afternoon", "evening"].includes(u.part) ? u.part : u.part === "afterschool" ? "afternoon" : u.part === "late" || u.part === "postdinner" ? "evening" : "any";
+    const g = { id: uid("g"), name: u.title, cat: u.cat, minutes: u.minutes, perWeek: Math.min(14, perWeek), when, days: u.days || null, deadline: 0 };
+    S.cal.goals.push(g); made.goals.push(g.id); CAL.view = "plan";
+    summary = `${u.title}, ${plural(g.perWeek, "time")} a week. VEX plans each one and moves them when your calendar changes`;
+  } else if (u.mode === "multi") {
+    const ws = u.scope === "next" ? addDays(weekStart(now), 7) : dayStart(now), we = addDays(weekStart(now), u.scope === "next" ? 14 : 7);
+    const chosen = spreadPick(suggestTimes({ ...u, range: [ws, we], day: null }, now, 7), u.count);
+    if (!chosen.length) { toast("There’s no free time for that this week."); return false; }
+    chosen.sort((a, b) => a.start - b.start).forEach(x => { plan(x.start, x.end); learnHabit(u.key, x.start, u.minutes); });
+    focusDay = dayStart(chosen[0].start);
+    summary = `${u.title}, ${plural(chosen.length, "time")}: ${chosen.map(x => `${dayName(x.day)} ${hm(x.start)}`).join(", ")}`;
+  } else {
+    const sugg = CAL.qa && CAL.qa.u === u ? CAL.qa.sugg : suggestTimes(u, now), x = sugg[pick] || sugg[0];
+    if (!x) { toast("No free time fits that. Try another day or a shorter time."); return false; }
+    if (appointment || (u.act && u.act.kind === "exam")) ev(u.title, x.start, x.end); else plan(x.start, x.end);
+    learnHabit(u.key, x.start, u.minutes); focusDay = x.day;
+    summary = `${u.title}, ${dayWord(x.day)} at ${hm(x.start)}`;
+  }
+  // follow-ups: study before a test, work before a deadline, a gift before a birthday
+  for (const f of u.follow) {
+    const on = CAL.qa && CAL.qa.u === u && f.id in CAL.qa.followOn ? CAL.qa.followOn[f.id] : f.on;
+    if (!on || u.day == null) continue;
+    if (f.id === "study") { const g = deadlineGoal(`Study for ${u.subject || "the test"}`, "study", u.day, f.total); S.cal.goals.push(g); made.goals.push(g.id); summary += `, plus ${fmtDur(f.total)} of study before it`; }
+    if (f.id === "work") { const g = deadlineGoal(`Work on ${u.subject || "it"}`, "study", u.day, f.total); S.cal.goals.push(g); made.goals.push(g.id); summary += `, plus ${fmtDur(f.total)} of work before it`; }
+    if (f.id === "gift") { const x = suggestTimes({ ...understand("shopping"), range: [addDays(u.day, -4), u.day], title: "Get a gift" }, now, 1)[0]; if (x) { const p = plan(x.start, x.end); p.title = `Get a gift for ${u.title.replace(/[’']s birthday/i, "").trim() || "the birthday"}`; p.cat = "chores"; summary += ", plus time to get a gift"; } }
+  }
+  if (focusDay != null && CAL.view === "day") CAL.day = focusDay;
+  afterCalChange();
+  toast(`Added: ${summary}`, () => {
+    S.cal.events = S.cal.events.filter(e => !made.events.includes(e.id));
+    S.cal.plan = S.cal.plan.filter(p => !made.plan.includes(p.id) && !made.goals.includes(p.goalId));
+    S.cal.goals = S.cal.goals.filter(g => !made.goals.includes(g.id));
+    afterCalChange();
+  }, 7000);
+  return true;
+}
+
+/* ---------- the assistant card under the box ---------- */
+const QA_EXAMPLES = ["gaming 2h tonight", "dentist next week", "study for math test friday", "voetbal elke woensdag 18u-19u30", "read 30 min every day", "movie with Sam this weekend", "gaming 3 times this week", "project due next friday"];
+function slotLabel(x) { return `${dayWord(x.day != null ? x.day : dayStart(x.start))} ${hm(x.start)}–${hm(x.end)}`; }
+function qaCardHTML(u) {
+  const c = catOf(u.cat), q = CAL.qa;
+  const kindTxt = { examprep: "Test, with study planned before it", deadline: "Deadline, with work planned before it", birthday: "Birthday, every year", goal: "A habit VEX keeps planning", multi: "Several sessions", recurring: "Repeats", allday: "All day", fixed: "", flex: "" }[u.mode];
+  let h = `<div class="qa-card"><div class="qa-head"><span class="g-ic" style="--c:${c.color}">${icon(c.icon)}</span><span class="qa-what"><b>${esc(u.title)}</b><small>${esc([c.name, u.mode === "allday" || u.mode === "birthday" || u.mode === "deadline" || u.mode === "examprep" ? "" : fmtDur(u.minutes), kindTxt, u.location].filter(Boolean).join(" · "))}</small></span></div>`;
+  if (u.needDay) return h + `<p class="qa-why">When is it? Add a day, like “friday” or “12/11”.</p></div>`;
+  if (u.mode === "fixed") {
+    const f = q.fixed;
+    h += `<div class="qa-best"><b>${esc(slotLabel({ start: f.start, end: f.end }))}</b></div>`;
+    if (f.clash.length) h += `<p class="qa-warn">${icon("info")}Clashes with ${esc(f.clash.map(i => `${i.title} (${hm(i.start)}–${hm(i.end)})`).join(", "))}.</p>${f.alt ? `<div class="qa-alts"><button type="button" class="chip" data-qpick="1">Move it to ${esc(dayStart(f.alt.start) === dayStart(f.start) ? hm(f.alt.start) : `${dayWord(dayStart(f.alt.start))} ${hm(f.alt.start)}`)}</button></div>` : ""}`;
+    else h += `<p class="qa-why">${icon("check")}You’re free then.</p>`;
+  } else if (u.mode === "flex" || u.mode === "multi") {
+    const s = q.sugg;
+    if (!s.length) h += `<p class="qa-warn">${icon("info")}No free time fits. Try another day or a shorter time.</p>`;
+    else if (u.mode === "multi") h += `<div class="qa-best"><b>${esc(s.map(x => `${dayName(x.day)} ${hm(x.start)}`).join(", "))}</b></div><p class="qa-why">${icon("wand")}${esc(`Spread over different days, at times that suit ${u.act ? u.act.label.toLowerCase() : "it"}.`)}</p>`;
+    else {
+      h += `<div class="qa-best"><b>${esc(slotLabel(s[0]))}</b></div><p class="qa-why">${icon("wand")}${esc(s[0].why)}</p>`;
+      if (s.length > 1) h += `<div class="qa-alts"><span>Or:</span>${s.slice(1).map((x, i) => `<button type="button" class="chip" data-qpick="${i + 1}">${esc(`${dayWord(x.day)} ${hm(x.start)}`)}</button>`).join("")}</div>`;
+    }
+  } else if (u.mode === "goal") h += `<p class="qa-why">${icon("wand")}${esc(`${u.days ? `On ${u.days.length === 7 ? "every day" : u.days.map(d => dayName(nextWeekday(d, Date.now()), "long")).join(" and ")}` : `${plural(u.per === "day" ? 7 : u.count, "time")} a week`}, ${fmtDur(u.minutes)} each. VEX picks the times and moves them when your calendar changes.`)}</p>`;
+  else if (u.mode === "recurring") h += `<div class="qa-best"><b>${esc(`Every ${u.days.length === 7 ? "day" : u.days.map(d => dayName(nextWeekday(d, Date.now()), "long")).join(" and ")} at ${pad2(Math.floor(u.startMin / 60))}:${pad2(u.startMin % 60)}`)}</b></div>`;
+  else h += `<div class="qa-best"><b>${esc(dayTitle(u.day))}${u.startMin != null && u.mode !== "birthday" && u.mode !== "deadline" ? " at " + pad2(Math.floor(u.startMin / 60)) + ":" + pad2(u.startMin % 60) : ""}</b></div>`;
+  for (const f of u.follow) {
+    const on = f.id in q.followOn ? q.followOn[f.id] : f.on;
+    const label = f.id === "study" ? `Also plan ${fmtDur(f.total)} of study on the days before` : f.id === "work" ? `Also plan ${fmtDur(f.total)} of work on the days before` : "Also plan time to get a gift";
+    h += `<label class="qa-follow"><input type="checkbox" data-qfollow="${f.id}"${on ? " checked" : ""}> ${esc(label)}</label>`;
+  }
+  return h + `<div class="qa-actions"><button type="button" class="btn pri sm" data-cal="qa">${icon("plus")}Add it</button><span class="hint">or press Enter</span></div></div>`;
+}
+function paintQuickPreview() {
+  const qa = $("#qaInput"), p = $("#qaPrev"); if (!qa || !p) return;
+  const text = qa.value.trim();
+  if (!text) { CAL.qa = null; p.innerHTML = `<div class="qa-ex">${QA_EXAMPLES.slice(0, 6).map(x => `<button type="button" class="chip" data-qex="${esc(x)}">${esc(x)}</button>`).join("")}</div>`; return; }
+  const prev = CAL.qa && CAL.qa.text === text ? CAL.qa.followOn : {};
+  const u = understand(text);
+  CAL.qa = { text, u, followOn: prev, sugg: u.mode === "flex" ? suggestTimes(u) : u.mode === "multi" ? suggestTimes({ ...u, range: u.scope === "next" ? [addDays(weekStart(Date.now()), 7), addDays(weekStart(Date.now()), 14)] : [dayStart(Date.now()), addDays(weekStart(Date.now()), 7)] }, Date.now(), 7) : [], fixed: u.mode === "fixed" ? fixedPlan(u) : null };
+  if (u.mode === "multi") CAL.qa.sugg = spreadPick(CAL.qa.sugg, u.count);
+  p.innerHTML = qaCardHTML(u);
+}
+function quickAdd(text, pick = 0) {
+  const qa = $("#qaInput");
+  if (!CAL.qa || CAL.qa.text !== String(text).trim()) { if (qa) qa.value = text; paintQuickPreview(); }
+  if (!CAL.qa) return false;
+  if (CAL.qa.u.needDay) { toast("Add when it is, like “friday” or “12/11”."); return false; }
+  const ok = commitUnderstanding(CAL.qa.u, pick);
+  if (ok) { CAL.qa = null; const q = $("#qaInput"); if (q) q.value = ""; paintQuickPreview(); }
+  return ok;
+}
+let qaT = null;
+$("#listBody").addEventListener("input", e => { if (e.target.id === "qaInput") { clearTimeout(qaT); qaT = setTimeout(paintQuickPreview, 120); } });
+$("#listBody").addEventListener("change", e => { const f = e.target.closest("[data-qfollow]"); if (f && CAL.qa) CAL.qa.followOn[f.dataset.qfollow] = f.checked; });
+$("#listBody").addEventListener("click", e => {
+  const ex = e.target.closest("[data-qex]"); if (ex) { const q = $("#qaInput"); q.value = ex.dataset.qex; paintQuickPreview(); q.focus(); return; }
+  const pk = e.target.closest("[data-qpick]"); if (pk && CAL.qa) quickAdd(CAL.qa.text, +pk.dataset.qpick);
+});
+function quickParse(text, ref) { return understand(text, ref); }
+Object.assign(window.VEXCAL || (window.VEXCAL = {}), { understand, suggestTimes, fixedPlan, learnHabit, habitBonus });
 
 /* ================= smarter: learning, rules, replies, today card, bundles, conversations, sent ================= */
 const capWord = s => s ? s[0].toUpperCase() + s.slice(1) : s;

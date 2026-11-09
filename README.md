@@ -56,11 +56,16 @@ There's no iPhone version of VEX yet.
 
 ## Smart calendar
 
-1. Open the **Calendar** tab and tap **Import**.
-2. Paste your timetable or calendar text, or paste a calendar link (the iCal link from Google Calendar, Smartschool or Outlook).
-3. Under **Plan**, tap **Add something** and tell VEX what you want to fit in.
+1. Open the **Calendar** tab and tap **Import** to paste your timetable or calendar text, or a calendar link (the iCal link from Google Calendar, Smartschool or Outlook).
+2. Type what you want to do in the box at the top, in your own words, in English or Dutch. VEX's built-in assistant works it out and shows its plan before you add it:
+   - "gaming 2h tonight" or "dentist next week": VEX picks a time that makes sense (dentists on weekdays, gaming in the evening after homework), says why, and offers other times.
+   - "study for math test friday": adds the test and plans study sessions on the days before.
+   - "gaming 3 times this week" or "piano twice a week": spreads sessions over different days and keeps planning them.
+   - "voetbal elke woensdag 18u-19u30" or "Lotte's birthday saturday": repeating events and birthdays.
+   - If something clashes with your timetable, VEX warns you and suggests a better time.
+3. VEX learns from you. When you finish sessions or pick times, it notices when you like to do things and plans them around then.
 
-VEX plans around your fixed events. It puts homework and study before gaming, avoids late gaming on school nights, and spreads things out over the week. When your calendar changes, it plans again by itself. You can also type things like "gaming 2h tonight" or "voetbal elke woensdag 18u-19u30" in the box at the top.
+The assistant runs on your device. Nothing you type is sent anywhere.
 
 ## Updates
 
