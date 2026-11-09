@@ -11,6 +11,10 @@ Every inbox in one place, sorted by what needs you.
 
 Red ✗? Click it, click **apk**, then the step with the ✗, and send a screenshot to Claude.
 
+## Several email addresses
+
+In VEX, open **Settings** and tap **Add email** to connect another address. Tap **Edit** next to any address to give it a name, like Work or School, and a color. Use the inbox button at the top to see one address at a time, and pick which address to send from when you write.
+
 ## Automatic updates
 
 Once this version is installed, VEX checks this repository for new builds by itself. When it finds one, it downloads and installs it. The first time, Android asks you to allow VEX to install apps. After that, Android may ask you to tap **Update** for each new version. You can turn this off in VEX under **Settings**, then **App updates**.

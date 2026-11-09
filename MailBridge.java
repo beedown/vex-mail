@@ -91,12 +91,34 @@ public class MailBridge {
         return o;
     }
 
-    private JSONObject config() {
+    private synchronized JSONArray accounts() {
         try {
-            return new JSONObject(prefs.getString("config", "{}"));
+            JSONArray list = new JSONArray(prefs.getString("accounts", "[]"));
+            String old = prefs.getString("config", null);
+            if (old != null) {
+                JSONObject c = new JSONObject(old);
+                c.put("id", "a1");
+                list.put(c);
+                prefs.edit().putString("accounts", list.toString()).remove("config").apply();
+            }
+            return list;
         } catch (Exception e) {
-            return new JSONObject();
+            return new JSONArray();
         }
+    }
+
+    private synchronized void saveAccounts(JSONArray list) {
+        prefs.edit().putString("accounts", list.toString()).apply();
+    }
+
+    /** The settings for one connected email address (the first one when no id is given). */
+    private JSONObject account(String id) throws Exception {
+        JSONArray list = accounts();
+        for (int i = 0; i < list.length(); i++) {
+            JSONObject c = list.getJSONObject(i);
+            if (id == null || id.isEmpty() || id.equals(c.optString("id"))) return c;
+        }
+        throw new MessagingException("That email address isn't connected anymore.");
     }
 
     private Session session(JSONObject c) {
@@ -136,10 +158,18 @@ public class MailBridge {
 
     @JavascriptInterface
     public String status() {
-        JSONObject c = config(), o = new JSONObject();
+        JSONObject o = new JSONObject();
         try {
-            o.put("connected", c.has("email"));
-            o.put("email", c.optString("email", ""));
+            JSONArray list = accounts(), out = new JSONArray();
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject c = list.getJSONObject(i), a = new JSONObject();
+                a.put("id", c.optString("id"));
+                a.put("email", c.optString("email"));
+                out.put(a);
+            }
+            o.put("connected", list.length() > 0);
+            o.put("email", list.length() > 0 ? list.getJSONObject(0).optString("email") : "");
+            o.put("accounts", out);
         } catch (Exception ignored) {
         }
         return o.toString();
@@ -151,8 +181,18 @@ public class MailBridge {
             JSONObject c = new JSONObject(json);
             Store store = openStore(c);
             store.close();
-            prefs.edit().putString("config", c.toString()).apply();
+            JSONArray list = accounts(), kept = new JSONArray();
+            String accountId = "a" + System.currentTimeMillis();
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject a = list.getJSONObject(i);
+                if (a.optString("email").equalsIgnoreCase(c.optString("email"))) accountId = a.optString("id");
+                else kept.put(a);
+            }
+            c.put("id", accountId);
+            kept.put(c);
+            saveAccounts(kept);
             JSONObject o = new JSONObject();
+            o.put("id", accountId);
             o.put("email", c.optString("email"));
             return o;
         });
@@ -160,14 +200,28 @@ public class MailBridge {
 
     @JavascriptInterface
     public void disconnect() {
-        prefs.edit().remove("config").apply();
+        prefs.edit().remove("config").remove("accounts").apply();
+    }
+
+    @JavascriptInterface
+    public void removeAccount(String id) {
+        JSONArray list = accounts(), kept = new JSONArray();
+        try {
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject a = list.getJSONObject(i);
+                if (!id.equals(a.optString("id"))) kept.put(a);
+            }
+        } catch (Exception ignored) {
+        }
+        saveAccounts(kept);
     }
 
     @JavascriptInterface
     public void fetch(final String id, final String json) {
         runJob(id, () -> {
-            int limit = new JSONObject(json).optInt("limit", 40);
-            Store store = openStore(config());
+            JSONObject opts = new JSONObject(json);
+            int limit = opts.optInt("limit", 40);
+            Store store = openStore(account(opts.optString("account")));
             try {
                 IMAPFolder inbox = (IMAPFolder) store.getFolder("INBOX");
                 inbox.open(Folder.READ_ONLY);
@@ -273,7 +327,7 @@ public class MailBridge {
     public void setFlags(final String id, final String json) {
         runJob(id, () -> {
             JSONObject o = new JSONObject(json);
-            Store store = openStore(config());
+            Store store = openStore(account(o.optString("account")));
             try {
                 IMAPFolder inbox = (IMAPFolder) store.getFolder("INBOX");
                 inbox.open(Folder.READ_WRITE);
@@ -294,7 +348,7 @@ public class MailBridge {
         runJob(id, () -> {
             JSONObject o = new JSONObject(json);
             boolean trash = "trash".equals(o.optString("to"));
-            JSONObject c = config();
+            JSONObject c = account(o.optString("account"));
             Store store = openStore(c);
             try {
                 IMAPFolder inbox = (IMAPFolder) store.getFolder("INBOX");
@@ -339,8 +393,7 @@ public class MailBridge {
     @JavascriptInterface
     public void send(final String id, final String json) {
         runJob(id, () -> {
-            JSONObject o = new JSONObject(json), c = config();
-            if (!c.has("email")) throw new MessagingException("No email account is connected.");
+            JSONObject o = new JSONObject(json), c = account(o.optString("account"));
             Session s = session(c);
             MimeMessage msg = new MimeMessage(s);
             msg.setFrom(new InternetAddress(c.optString("email")));
