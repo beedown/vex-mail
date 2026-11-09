@@ -17,9 +17,9 @@ jobs:
 
       - name: Check the VEX files are in the right place
         run: |
-          for f in index.html icon-maskable-512.png vex.keystore; do
+          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
             if [ ! -f "$f" ]; then
-              echo "::error::$f is missing from the top of the repository. Upload the files themselves, not the folder they are in."
+              echo "::error::$f is missing from the top of the repository. Upload all the VEX files, not the folder they are in."
               exit 1
             fi
           done
@@ -42,173 +42,19 @@ jobs:
         with:
           gradle-version: "8.7"
 
-      - name: Create the Android project
+      - name: Put the Android project together
         run: |
           set -e
           A=android/app/src/main
           mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26"
+          cp settings.gradle gradle.properties android/
+          cp project-build.gradle android/build.gradle
+          cp app-build.gradle android/app/build.gradle
+          cp vex.keystore android/app/vex.keystore
+          cp AndroidManifest.xml "$A/AndroidManifest.xml"
+          cp MainActivity.java MailBridge.java "$A/java/com/vexmail/app/"
           cp index.html "$A/assets/index.html"
           cp icon-maskable-512.png "$A/res/drawable-nodpi/vex_foreground.png"
-          cp vex.keystore android/app/vex.keystore
-          cat > android/settings.gradle <<'EOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-          rootProject.name = "VEX"
-          include ':app'
-          EOF
-          cat > android/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application' version '8.5.2' apply false
-          }
-          EOF
-          cat > android/gradle.properties <<'EOF'
-          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          android.useAndroidX=true
-          android.nonTransitiveRClass=true
-          EOF
-          cat > android/app/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application'
-          }
-
-          def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
-
-          android {
-              namespace 'com.vexmail.app'
-              compileSdk 34
-
-              defaultConfig {
-                  applicationId 'com.vexmail.app'
-                  minSdk 26
-                  targetSdk 34
-                  versionCode buildNumber
-                  versionName "1.${buildNumber}"
-              }
-
-              signingConfigs {
-                  vex {
-                      storeFile file('vex.keystore')
-                      storePassword 'vexmail'
-                      keyAlias 'vex'
-                      keyPassword 'vexmail'
-                  }
-              }
-
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                      signingConfig signingConfigs.vex
-                  }
-                  debug {
-                      signingConfig signingConfigs.vex
-                  }
-              }
-
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_17
-                  targetCompatibility JavaVersion.VERSION_17
-              }
-
-              lint {
-                  abortOnError false
-                  checkReleaseBuilds false
-              }
-          }
-          EOF
-          cat > "$A/AndroidManifest.xml" <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-              <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.VIBRATE" />
-
-              <application
-                  android:allowBackup="true"
-                  android:icon="@mipmap/ic_launcher"
-                  android:roundIcon="@mipmap/ic_launcher"
-                  android:label="VEX"
-                  android:theme="@android:style/Theme.Material.NoActionBar">
-
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:screenOrientation="portrait"
-                      android:windowSoftInputMode="adjustResize"
-                      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
-          cat > "$A/java/com/vexmail/app/MainActivity.java" <<'EOF'
-          package com.vexmail.app;
-
-          import android.app.Activity;
-          import android.graphics.Color;
-          import android.os.Bundle;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
-
-          /** VEX for Android: shows the VEX app (bundled inside the APK) full screen. */
-          public class MainActivity extends Activity {
-              private WebView web;
-
-              @Override
-              protected void onCreate(Bundle state) {
-                  super.onCreate(state);
-                  getWindow().setStatusBarColor(Color.BLACK);
-                  getWindow().setNavigationBarColor(Color.BLACK);
-
-                  web = new WebView(this);
-                  web.setBackgroundColor(Color.BLACK);
-                  WebSettings settings = web.getSettings();
-                  settings.setJavaScriptEnabled(true);
-                  settings.setDomStorageEnabled(true);
-                  settings.setAllowFileAccess(true);
-                  settings.setTextZoom(100);
-                  web.setWebViewClient(new WebViewClient());
-                  setContentView(web);
-
-                  if (state != null) {
-                      web.restoreState(state);
-                  } else {
-                      web.loadUrl("file:///android_asset/index.html");
-                  }
-              }
-
-              @Override
-              protected void onSaveInstanceState(Bundle out) {
-                  super.onSaveInstanceState(out);
-                  web.saveState(out);
-              }
-
-              /** The back button closes whatever is open inside VEX first, then leaves the app. */
-              @Override
-              public void onBackPressed() {
-                  web.evaluateJavascript("(window.vexBack && window.vexBack()) ? 'yes' : 'no'", value -> {
-                      if (!"\"yes\"".equals(value)) {
-                          finish();
-                      }
-                  });
-              }
-          }
-          EOF
           cat > "$A/res/mipmap-anydpi-v26/ic_launcher.xml" <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
