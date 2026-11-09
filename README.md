@@ -2,19 +2,28 @@
 
 Every inbox in one place, sorted by what needs you.
 
-## Build the Android app (VEX.apk)
+## Update VEX or set it up
 
-1. Click the copy button in the top right corner of the box at the bottom of this page.
-2. Open the **Actions** tab and click **set up a workflow yourself**.
-3. Delete everything in the box, paste, then click **Commit changes** twice.
-4. Open **Actions** again and wait about 5 minutes for a green check.
-5. On your Android phone, open this repository's **Releases** page and tap **VEX.apk** to download and install it.
+1. Click **Add file**, then **Upload files**. Drag in all the VEX files (not the folder), then click **Commit changes**.
+2. Only when Claude gives you a new build file: open `.github/workflows/main.yml`, click the pencil, replace everything with the box at the bottom of this page, and click **Commit changes** twice.
+3. Open **Actions** and wait for a green check.
+4. On your Android phone, open this repository's **Releases** page, tap **VEX.apk** under the newest build, and install it over the old one. Your mail stays.
 
-Red ✗ instead of a green check? Click it, click **apk**, then click the step with the ✗ and send a screenshot to Claude.
+Red ✗? Click it, click **apk**, then the step with the ✗, and send a screenshot to Claude.
 
-## Optional: the web version (for iPhone)
+## Automatic updates
 
-Open **Settings**, then **Pages**. Under **Branch**, pick `main` and `/ (root)`, then click **Save**. After a minute your link appears. On iPhone, open it in Safari, tap **Share**, then **Add to Home Screen**.
+Once this version is installed, VEX checks this repository for new builds by itself. When it finds one, it downloads and installs it. The first time, Android asks you to allow VEX to install apps. After that, Android may ask you to tap **Update** for each new version. You can turn this off in VEX under **Settings**, then **App updates**.
+
+## Connect your real email
+
+In VEX, open **Settings** and tap **Connect**. Gmail, Yahoo and iCloud need an **app password** instead of your normal password:
+
+- **Gmail:** turn on 2-Step Verification in your Google account, then create an app password at myaccount.google.com/apppasswords.
+- **Yahoo:** create one in your Yahoo account's security settings.
+- **iCloud:** create an app-specific password in your Apple account.
+
+Outlook and Hotmail aren't supported yet. Your password is saved only on your phone.
 
 ## The build file
 
@@ -38,9 +47,9 @@ jobs:
 
       - name: Check the VEX files are in the right place
         run: |
-          for f in index.html icon-maskable-512.png vex.keystore; do
+          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
             if [ ! -f "$f" ]; then
-              echo "::error::$f is missing from the top of the repository. Upload the files themselves, not the folder they are in."
+              echo "::error::$f is missing from the top of the repository. Upload all the VEX files, not the folder they are in."
               exit 1
             fi
           done
@@ -52,180 +61,30 @@ jobs:
           java-version: "17"
 
       - name: Set up the Android tools
-        uses: android-actions/setup-android@v3
+        run: |
+          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.7"
 
-      - name: Create the Android project
+      - name: Put the Android project together
         run: |
           set -e
           A=android/app/src/main
           mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26"
+          cp settings.gradle gradle.properties android/
+          cp project-build.gradle android/build.gradle
+          cp app-build.gradle android/app/build.gradle
+          cp vex.keystore android/app/vex.keystore
+          cp AndroidManifest.xml "$A/AndroidManifest.xml"
+          cp MainActivity.java MailBridge.java "$A/java/com/vexmail/app/"
           cp index.html "$A/assets/index.html"
           cp icon-maskable-512.png "$A/res/drawable-nodpi/vex_foreground.png"
-          cp vex.keystore android/app/vex.keystore
-          cat > android/settings.gradle <<'EOF'
-          pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-              repositories {
-                  google()
-                  mavenCentral()
-              }
-          }
-          rootProject.name = "VEX"
-          include ':app'
-          EOF
-          cat > android/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application' version '8.5.2' apply false
-          }
-          EOF
-          cat > android/gradle.properties <<'EOF'
-          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
-          android.useAndroidX=true
-          android.nonTransitiveRClass=true
-          EOF
-          cat > android/app/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application'
-          }
-
-          def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
-
-          android {
-              namespace 'com.vexmail.app'
-              compileSdk 34
-
-              defaultConfig {
-                  applicationId 'com.vexmail.app'
-                  minSdk 26
-                  targetSdk 34
-                  versionCode buildNumber
-                  versionName "1.${buildNumber}"
-              }
-
-              signingConfigs {
-                  vex {
-                      storeFile file('vex.keystore')
-                      storePassword 'vexmail'
-                      keyAlias 'vex'
-                      keyPassword 'vexmail'
-                  }
-              }
-
-              buildTypes {
-                  release {
-                      minifyEnabled false
-                      signingConfig signingConfigs.vex
-                  }
-                  debug {
-                      signingConfig signingConfigs.vex
-                  }
-              }
-
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_17
-                  targetCompatibility JavaVersion.VERSION_17
-              }
-
-              lint {
-                  abortOnError false
-                  checkReleaseBuilds false
-              }
-          }
-          EOF
-          cat > "$A/AndroidManifest.xml" <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-              <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.VIBRATE" />
-
-              <application
-                  android:allowBackup="true"
-                  android:icon="@mipmap/ic_launcher"
-                  android:roundIcon="@mipmap/ic_launcher"
-                  android:label="VEX"
-                  android:theme="@android:style/Theme.Material.NoActionBar">
-
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:screenOrientation="portrait"
-                      android:windowSoftInputMode="adjustResize"
-                      android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode">
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN" />
-                          <category android:name="android.intent.category.LAUNCHER" />
-                      </intent-filter>
-                  </activity>
-              </application>
-          </manifest>
-          EOF
-          cat > "$A/java/com/vexmail/app/MainActivity.java" <<'EOF'
-          package com.vexmail.app;
-
-          import android.app.Activity;
-          import android.graphics.Color;
-          import android.os.Bundle;
-          import android.webkit.WebSettings;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
-
-          /** VEX for Android: shows the VEX app (bundled inside the APK) full screen. */
-          public class MainActivity extends Activity {
-              private WebView web;
-
-              @Override
-              protected void onCreate(Bundle state) {
-                  super.onCreate(state);
-                  getWindow().setStatusBarColor(Color.BLACK);
-                  getWindow().setNavigationBarColor(Color.BLACK);
-
-                  web = new WebView(this);
-                  web.setBackgroundColor(Color.BLACK);
-                  WebSettings settings = web.getSettings();
-                  settings.setJavaScriptEnabled(true);
-                  settings.setDomStorageEnabled(true);
-                  settings.setAllowFileAccess(true);
-                  settings.setTextZoom(100);
-                  web.setWebViewClient(new WebViewClient());
-                  setContentView(web);
-
-                  if (state != null) {
-                      web.restoreState(state);
-                  } else {
-                      web.loadUrl("file:///android_asset/index.html");
-                  }
-              }
-
-              @Override
-              protected void onSaveInstanceState(Bundle out) {
-                  super.onSaveInstanceState(out);
-                  web.saveState(out);
-              }
-
-              /** The back button closes whatever is open inside VEX first, then leaves the app. */
-              @Override
-              public void onBackPressed() {
-                  web.evaluateJavascript("(window.vexBack && window.vexBack()) ? 'yes' : 'no'", value -> {
-                      if (!"\"yes\"".equals(value)) {
-                          finish();
-                      }
-                  });
-              }
-          }
-          EOF
           cat > "$A/res/mipmap-anydpi-v26/ic_launcher.xml" <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">

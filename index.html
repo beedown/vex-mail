@@ -161,7 +161,7 @@ img{max-width:100%}
 .app.searching .notice,.app.searching .chips,.app.selecting .searchbar,.app.selecting .notice{display:none}
 
 /* list */
-.scroll{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scroll{position:relative;flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .list{position:relative;padding:0 12px 150px}
 .ptr{height:0;overflow:hidden;display:grid;place-items:center;font-family:var(--f-cond);font-weight:600;color:var(--faint)}
 .day{margin:14px 6px 8px;font-family:var(--f-title);font-style:italic;font-size:17px;color:var(--faint)}
@@ -180,6 +180,7 @@ img{max-width:100%}
 .mail.sel{background:var(--red-soft)}
 .av{position:relative;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line-2);font-family:var(--f-title);font-size:19px;color:var(--ink)}
 .unread .av{border-color:var(--red)}
+.av>svg{width:20px;height:20px;color:var(--muted)}
 .av i{position:absolute;right:0;bottom:0;width:11px;height:11px;transform:rotate(45deg);border:2px solid var(--surface)}
 .av.pick{background:transparent;border:2px solid var(--line-2)}
 .av.pick svg{width:20px;height:20px;opacity:0}
@@ -332,6 +333,13 @@ textarea.field{height:auto;min-height:170px;padding:12px 14px;line-height:1.55;r
 .gdots{display:flex;gap:7px}
 .gdots i{width:8px;height:8px;transform:rotate(45deg);background:var(--line-2)}
 .gdots i.on{background:var(--red)}
+.seg.wide{display:flex;width:100%}
+.seg.wide button{flex:1;padding:0 6px}
+.hint{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.hint b{color:var(--ink)}
+.hint a{color:var(--red-text);font-weight:600}
+.hint small{display:block;margin-top:8px;font-size:13px;color:var(--faint)}
+.notice .btn.sm{flex:none;height:32px;margin-left:auto}
 .toast{position:absolute;left:14px;right:14px;bottom:84px;z-index:70;min-height:52px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-radius:8px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14.5px;box-shadow:var(--shadow);transform:translateY(16px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .toast.show{transform:none;opacity:1;pointer-events:auto}
 .toast button{height:38px;padding:0 12px;border-radius:6px;font-family:var(--f-cond);font-weight:700;font-size:16px;color:var(--toast-btn)}
@@ -423,7 +431,8 @@ textarea.field{height:auto;min-height:170px;padding:12px 14px;line-height:1.55;r
     <button class="cancel" id="qCancel" type="button">Cancel</button>
   </div>
   <div class="filters" id="filters" hidden></div>
-  <div class="notice" id="notice"><svg aria-hidden="true"><use href="#i-info"/></svg><span>These are sample emails. Support for your real inbox comes in a later update.</span><button class="mini" id="noticeX" type="button" aria-label="Hide this note"><svg><use href="#i-x"/></svg></button></div>
+  <div class="notice" id="notice"><svg aria-hidden="true"><use href="#i-info"/></svg><span>These are sample emails. Support for your real inbox comes in a later update.</span><button class="btn sm" id="noticeConnect" type="button" hidden>Connect</button><button class="mini" id="noticeX" type="button" aria-label="Hide this note"><svg><use href="#i-x"/></svg></button></div>
+  <div class="notice" id="updateBar" hidden><svg aria-hidden="true"><use href="#i-download"/></svg><span id="updateText">A new version of VEX is ready.</span><button class="btn sm pri" id="updateBtn" type="button">Update</button><button class="mini" id="updateX" type="button" aria-label="Hide"><svg><use href="#i-x"/></svg></button></div>
   <nav class="chips" id="chips" aria-label="Filter by tag"></nav>
 
   <main class="list" id="list">
@@ -522,6 +531,22 @@ textarea.field{height:auto;min-height:170px;padding:12px 14px;line-height:1.55;r
       <div class="gnav"><div class="gdots" id="gDots" aria-hidden="true"></div><span class="sp"></span><button class="btn" id="gBack" type="button">Back</button><button class="btn pri" id="gNext" type="button">Next</button></div>
     </div>
   </section>
+
+  <section class="sheet" id="connectSheet" aria-label="Connect your email">
+    <div class="hd"><h3>Connect your email</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="bd stack">
+      <div class="seg wide" id="provSeg"></div>
+      <p class="hint" id="provHint"></p>
+      <input class="field" id="mEmail" type="email" placeholder="Your email address" autocomplete="email" autocapitalize="off" spellcheck="false" aria-label="Your email address">
+      <input class="field" id="mPass" type="password" placeholder="App password" autocomplete="off" aria-label="App password">
+      <div class="stack" id="mServer" hidden>
+        <input class="field" id="mImap" type="text" placeholder="Incoming server, like imap.example.com" autocapitalize="off" spellcheck="false" aria-label="Incoming mail server">
+        <input class="field" id="mSmtp" type="text" placeholder="Outgoing server, like smtp.example.com" autocapitalize="off" spellcheck="false" aria-label="Outgoing mail server">
+      </div>
+      <div class="draftline" id="mStatus"></div>
+      <button class="btn pri" id="mConnect" type="button">Connect</button>
+    </div>
+  </section>
   <div class="toast" id="toast" role="status"><span id="toastMsg"></span><span class="sp"></span><button type="button" id="toastUndo">Undo</button></div>
 </div>
 <script>
@@ -611,6 +636,23 @@ const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
+
+/* ================= real email: only inside the Android app, which provides VexNative ================= */
+const NATIVE = window.VexNative && typeof window.VexNative.status === "function" ? window.VexNative : null;
+const calls = new Map(); let callSeq = 0;
+window.vexNativeResult = (id, json) => { const cb = calls.get(id); if (!cb) return; calls.delete(id); let r; try { r = JSON.parse(json); } catch (e) { r = { ok: false, message: "Unexpected reply" }; } cb(r); };
+function native(method, payload) {
+  return new Promise(resolve => {
+    if (!NATIVE || typeof NATIVE[method] !== "function") { resolve({ ok: false, code: "unavailable", message: "This only works in the Android app." }); return; }
+    const id = "c" + (++callSeq); calls.set(id, resolve);
+    setTimeout(() => { if (calls.has(id)) { calls.delete(id); resolve({ ok: false, code: "timeout", message: "Your mail server took too long to answer." }); } }, 90000);
+    try { NATIVE[method](id, JSON.stringify(payload || {})); } catch (e) { calls.delete(id); resolve({ ok: false, message: String((e && e.message) || e) }); }
+  });
+}
+const UPDATE_REPO = "beedown/vex-mail"; // where GitHub publishes new VEX builds
+const CAN_UPDATE = !!(NATIVE && typeof NATIVE.checkUpdate === "function");
+let update = null;
+function nativeStatus() { try { return NATIVE ? JSON.parse(NATIVE.status()) : { connected: false }; } catch (e) { return { connected: false }; } }
 
 /* ================= smarts: sorting, reasons, dates (all on-device) ================= */
 function classify(m) {
@@ -703,11 +745,15 @@ const S = {
   sent: saved?.sent || [], scheduled: saved?.scheduled || [], draft: saved?.draft || null,
   recent: saved?.recent || [], learn: saved?.learn || {},
   stats: saved?.stats || { archived: 0, replied: 0, sent: 0 },
-  prefs: Object.assign({ theme: "dark", size: "m", density: "comfy", swipeRight: "archive", swipeLeft: "snooze", afterArchive: "next", undoSecs: 5, notice: true, gateSeen: false, syncWanted: false }, saved?.prefs),
+  prefs: Object.assign({ autoUpdate: "on", lastUpdateCheck: 0, updateTried: 0, theme: "dark", size: "m", density: "comfy", swipeRight: "archive", swipeLeft: "snooze", afterArchive: "next", undoSecs: 5, notice: true, gateSeen: false, syncWanted: false }, saved?.prefs),
   tab: "inbox", filter: "all", account: "all", openId: null, viewIds: [],
   selecting: false, selected: new Set(), snoozeTarget: null,
   search: { active: false, filters: [], idx: -1, items: [] }
 };
+const NSTAT = nativeStatus();
+if (S.prefs.mailMode === "live" && !NSTAT.connected) { S.prefs.mailMode = "sample"; S.mails = seed(); S.incoming = INCOMING.map(m => m.id); }
+const LIVE = S.prefs.mailMode === "live";
+if (LIVE) { for (const k of Object.keys(ACCOUNTS)) delete ACCOUNTS[k]; ACCOUNTS.mail = { name: NSTAT.email || S.prefs.liveEmail || "Your inbox", color: "#d61c2c" }; }
 S.mails.forEach(hydrate);
 function stateSnapshot() { return { mails: S.mails, incoming: S.incoming, sent: S.sent, scheduled: S.scheduled, draft: S.draft, recent: S.recent, learn: S.learn, stats: S.stats, prefs: S.prefs }; }
 function save() { store.set(KEY, stateSnapshot()); if (typeof syncSoon === "function") syncSoon(); }
@@ -762,7 +808,10 @@ function render() {
   const settings = S.tab === "settings";
   $("#searchbar").hidden = settings;
   $("#chips").hidden = settings || S.tab !== "inbox";
-  $("#notice").hidden = settings || !S.prefs.notice;
+  $("#notice").hidden = settings || !S.prefs.notice || LIVE;
+  $("#updateBar").hidden = !update || settings || S.search.active;
+  if (update) $("#updateText").textContent = `VEX build ${update.latest} is ready.`;
+  if (BUILD === "phone") { $("#notice span").textContent = NATIVE ? "These are sample emails. Connect your real inbox to see your own mail." : "These are sample emails. Connecting your real inbox works in the VEX Android app."; $("#noticeConnect").hidden = !NATIVE || LIVE; }
   $("#composeBtn").hidden = settings;
   if (S.search.active) { renderSearch(); return; }
   if (settings) { setTitle("Settings", ""); renderSettings(); return; }
@@ -775,6 +824,7 @@ function render() {
     mails = needsYou();
     setTitle("Needs you", mails.length ? "Questions waiting on you, close deadlines and starred mail." : "Nobody is waiting on you.");
   } else { setTitle("Later", "Snoozed mail, scheduled sends and follow-ups."); renderLater(); return; }
+  if (!mails.length && LIVE && S.loading) { zero("Loading your inbox", "This takes a few seconds the first time."); S.viewIds = []; return; }
   if (!mails.length) {
     const z = S.tab === "inbox" && S.filter !== "all" ? ["Nothing here", "Try another tag."] : ["All quiet", "No mail waiting. Pull down to check for new mail."];
     zero(z[0], z[1]); S.viewIds = []; return;
@@ -853,6 +903,12 @@ function renderSettings() {
     <div class="set-group" style="margin-top:10px"><div class="opt"><span>Setup guide and tips</span><button class="btn sm" type="button" data-act="guide">Open</button></div></div>
     <div class="set-h">This week</div>
     <div class="stats"><div class="stat"><b>${received}</b><span>Received</span></div><div class="stat"><b>${S.stats.archived}</b><span>Archived</span></div><div class="stat"><b>${S.stats.replied}</b><span>Replied</span></div></div>
+    ${CAN_UPDATE ? `<div class="set-h">App updates</div>
+    <div class="set-group">
+      <div class="opt"><span>Version</span><span class="muted">Build ${esc(NATIVE.appBuild ? NATIVE.appBuild() : "?")}</span></div>
+      <div class="opt"><span>Install updates by itself</span>${seg("autoUpdate", [["on", "On"], ["off", "Off"]])}</div>
+      <div class="opt"><span>${update ? `Build ${update.latest} is ready` : "Check for a new version"}</span><button class="btn sm${update ? " pri" : ""}" type="button" data-act="${update ? "update" : "checkupdate"}">${update ? "Update" : "Check now"}</button></div>
+    </div>` : ""}
     <div class="set-h">Look</div>
     <div class="set-group">
       <div class="opt"><span>Theme</span>${seg("theme", [["dark", "Black"], ["light", "Bone"], ["system", "Auto"]])}</div>
@@ -868,8 +924,8 @@ function renderSettings() {
     </div>
     <div class="set-h">Shortcuts on a keyboard</div>
     <div class="set-group"><div class="keys"><kbd>/</kbd><span>Search</span><kbd>c</kbd><span>Compose</span><kbd>j / k</kbd><span>Next or previous email</span><kbd>e</kbd><span>Archive</span><kbd>s</kbd><span>Star</span><kbd>u</kbd><span>Mark unread</span><kbd>r</kbd><span>Reply</span><kbd>Esc</kbd><span>Back</span></div></div>
-    <div class="set-h">Sample inbox</div>
-    <div class="set-group"><div class="opt"><span>Start over with the sample emails</span><button class="btn sm" type="button" data-act="reset">Reset</button></div></div>
+    ${LIVE ? "" : `<div class="set-h">Sample inbox</div>
+    <div class="set-group"><div class="opt"><span>Start over with the sample emails</span><button class="btn sm" type="button" data-act="reset">Reset</button></div></div>`}
     <div class="about"><img src="${esc($(".brand img").src)}" alt=""><div><b>VEX Mail</b><span>Every inbox. One place.</span></div></div>`;
 }
 
@@ -882,14 +938,30 @@ function toast(msg, undo, ms = 4200) {
 $("#toastUndo").addEventListener("click", () => { const f = undoFn; undoFn = null; $("#toast").classList.remove("show"); if (f) f(); });
 
 /* ================= actions ================= */
+const pendingRemote = new Set();
+const liveUids = ids => [].concat(ids).map(byId).filter(m => m && m.live && m.uid != null).map(m => m.uid);
+function remoteFlags(ids, flags) { const uids = liveUids(ids); if (uids.length) native("setFlags", { uids, ...flags }).then(r => { if (!r.ok && r.code !== "unavailable") toast("Couldn’t update your mail server. Check your internet."); }); }
+function remoteMove(mails, status) {
+  const live = mails.filter(m => m.live && m.uid != null);
+  if (!live.length || (status !== "archived" && status !== "trash")) return null;
+  live.forEach(m => pendingRemote.add(m.id));
+  const t = setTimeout(async () => {
+    const r = await native("move", { to: status === "trash" ? "trash" : "archive", uids: live.map(m => m.uid) });
+    live.forEach(m => pendingRemote.delete(m.id));
+    if (!r.ok) toast(`Couldn’t ${status === "trash" ? "delete" : "archive"} that on your mail server. It comes back when you check mail.`);
+  }, 4600);
+  return () => { clearTimeout(t); live.forEach(m => pendingRemote.delete(m.id)); };
+}
 function setStatus(ids, status, msg, extra = {}) {
   ids = [].concat(ids).filter(Boolean);
   const before = ids.map(byId).filter(Boolean).map(m => ({ m, status: m.status, snoozeUntil: m.snoozeUntil, unread: m.unread }));
   if (!before.length) return;
   before.forEach(b => Object.assign(b.m, { status }, extra));
   if (status === "archived") S.stats.archived += before.length;
+  const cancelRemote = remoteMove(before.map(b => b.m), status);
   save(); render();
   toast(msg, () => {
+    if (cancelRemote) cancelRemote();
     before.forEach(b => Object.assign(b.m, { status: b.status, snoozeUntil: b.snoozeUntil, unread: b.unread }));
     if (status === "archived") S.stats.archived = Math.max(0, S.stats.archived - before.length);
     save(); render();
@@ -897,8 +969,8 @@ function setStatus(ids, status, msg, extra = {}) {
 }
 const archive = ids => setStatus(ids, "archived", [].concat(ids).length > 1 ? `${plural([].concat(ids).length, "email")} archived` : "Archived");
 const trash = ids => setStatus(ids, "trash", [].concat(ids).length > 1 ? `${plural([].concat(ids).length, "email")} deleted` : "Deleted");
-function setRead(ids, unread) { [].concat(ids).forEach(id => { const m = byId(id); if (m) m.unread = unread; }); save(); render(); }
-function setStar(ids, star) { [].concat(ids).forEach(id => { const m = byId(id); if (m) m.star = star; }); save(); render(); }
+function setRead(ids, unread) { [].concat(ids).forEach(id => { const m = byId(id); if (m) m.unread = unread; }); remoteFlags(ids, { seen: !unread }); save(); render(); }
+function setStar(ids, star) { [].concat(ids).forEach(id => { const m = byId(id); if (m) m.star = star; }); remoteFlags(ids, { flagged: star }); save(); render(); }
 function swipeAct(id, action) {
   const m = byId(id); if (!m) return;
   if (action === "archive") archive(id);
@@ -907,6 +979,7 @@ function swipeAct(id, action) {
   else openSnooze(id);
 }
 function checkNew() {
+  if (LIVE) { syncInbox(true); return; }
   const next = INCOMING.find(m => m.id === S.incoming[0]);
   if (!next) { toast("No new mail"); return; }
   S.incoming.shift();
@@ -981,10 +1054,15 @@ function laterAction(act, id) {
   else if (act === "perms") openPermissions();
   else if (act === "install") openInstall();
   else if (act === "guide") openGuide();
+  else if (act === "connect") openConnect();
+  else if (act === "update") installUpdate(false);
+  else if (act === "checkupdate") checkForUpdate(true);
+  else if (act === "disconnect") doDisconnect();
 }
 $("#chips").addEventListener("click", e => { const c = e.target.closest("[data-filter]"); if (c) { S.filter = c.dataset.filter; render(); } });
 $("#nav").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (!b) return; S.tab = b.dataset.tab; if (S.selecting) stopSelect(); scroller.scrollTop = 0; render(); });
 $("#noticeX").addEventListener("click", () => { S.prefs.notice = false; save(); render(); });
+$("#noticeConnect").addEventListener("click", () => openConnect());
 
 /* ================= selection ================= */
 function startSelect(id) { S.selecting = true; S.selected = new Set(id ? [id] : []); render(); }
@@ -1002,7 +1080,7 @@ $("#selTrash").addEventListener("click", () => { const ids = selIds(); S.selecti
 function openMail(id) {
   const m = byId(id); if (!m) return;
   S.openId = id; if (!S.viewIds.includes(id)) S.viewIds = [id];
-  if (m.unread) { m.unread = false; save(); render(); }
+  if (m.unread) { m.unread = false; remoteFlags(id, { seen: true }); save(); render(); }
   paintReader(m);
   $("#reader").classList.add("open"); $("#readBody").scrollTop = 0;
 }
@@ -1043,7 +1121,7 @@ function afterRemove(id) {
 $("#rBack").addEventListener("click", closeMail);
 $("#rPrev").addEventListener("click", () => step(-1));
 $("#rNext").addEventListener("click", () => step(1));
-$("#rStar").addEventListener("click", () => { const m = byId(S.openId); if (!m) return; m.star = !m.star; save(); render(); paintReader(m); toast(m.star ? "Starred" : "Unstarred"); });
+$("#rStar").addEventListener("click", () => { const m = byId(S.openId); if (!m) return; m.star = !m.star; remoteFlags(m.id, { flagged: m.star }); save(); render(); paintReader(m); toast(m.star ? "Starred" : "Unstarred"); });
 $("#rSnooze").addEventListener("click", () => openSnooze(S.openId));
 $("#rArchive").addEventListener("click", () => { const id = S.openId; afterRemove(id); archive(id); });
 $("#rReply").addEventListener("click", () => replyTo(byId(S.openId)));
@@ -1057,7 +1135,7 @@ $("#rMore").addEventListener("click", () => {
 });
 $("#moreMenu").addEventListener("click", e => {
   const b = e.target.closest("[data-m]"); if (!b) return; const m = byId(S.openId); closeSheets(); if (!m) return;
-  if (b.dataset.m === "unread") { m.unread = true; save(); closeMail(); toast("Marked unread"); }
+  if (b.dataset.m === "unread") { m.unread = true; remoteFlags(m.id, { seen: false }); save(); closeMail(); toast("Marked unread"); }
   else if (b.dataset.m === "trash") { const id = m.id; afterRemove(id); trash(id); }
   else if (b.dataset.m === "copy") copyText(m.email);
   else if (b.dataset.m === "sender") { closeMail(); openSearchWith([{ type: "from", email: m.email, name: m.from }]); }
@@ -1444,13 +1522,19 @@ $("#sendBtn").addEventListener("click", () => {
   const t = setTimeout(() => { if (!cancelled) deliver(x); }, secs * 1000);
   toast(`Sending in ${secs} seconds`, () => { cancelled = true; clearTimeout(t); openCompose({ ...x, fresh: true }); toast("Not sent. Your email is back in the editor."); }, secs * 1000);
 });
-function deliver(x) {
+async function deliver(x) {
+  if (LIVE) {
+    const orig = x.replyTo ? byId(x.replyTo) : null;
+    toast("Sending…");
+    const r = await native("send", { to: x.to, subject: x.subject || "(no subject)", body: x.body, inReplyTo: (orig && orig.messageId) || "" });
+    if (!r.ok) { toast(r.code === "auth" ? "Couldn’t send: your app password stopped working." : "Couldn’t send. Your email is back in the editor."); openCompose({ ...x, fresh: true }); return; }
+  }
   const now = Date.now();
   S.sent.unshift({ id: "s" + now, to: x.to, subject: x.subject || "(no subject)", body: x.body, time: now, followAt: x.track ? now + 3 * D : 0, answered: false });
   S.sent = S.sent.slice(0, 50); S.stats.sent++;
   if (x.replyTo) { const m = byId(x.replyTo); if (m) { m.replied = true; hydrate(m); S.stats.replied++; } }
   save(); render(); if (S.openId) { const m = byId(S.openId); if (m) paintReader(m); }
-  toast(x.sendAt ? `Scheduled email to ${x.to} sent (sample mode)` : "Sent (sample mode)");
+  toast(LIVE ? (x.sendAt ? `Scheduled email to ${x.to} sent` : "Sent") : (x.sendAt ? `Scheduled email to ${x.to} sent (sample mode)` : "Sent (sample mode)"));
 }
 function laterOptions() {
   const now = new Date(), at = (days, h) => { const t = new Date(now); t.setDate(t.getDate() + days); t.setHours(h, 0, 0, 0); return t; };
@@ -1470,6 +1554,106 @@ $("#laterGrid").addEventListener("click", e => {
   toast(`Scheduled for ${fmtWhen(item.sendAt)}`, () => { S.scheduled = S.scheduled.filter(s => s.id !== item.id); save(); render(); openCompose({ ...item, fresh: true }); });
 });
 
+
+/* ================= connect a real inbox (Android app) ================= */
+const PROVIDERS = {
+  gmail: { label: "Gmail", imap: "imap.gmail.com", smtp: "smtp.gmail.com", smtpPort: 465, sec: "ssl", hint: "Gmail needs an <b>app password</b>, not your normal password. Turn on 2-Step Verification in your Google account, then create an app password and paste it here.", link: ["https://myaccount.google.com/apppasswords", "Create a Gmail app password"] },
+  yahoo: { label: "Yahoo", imap: "imap.mail.yahoo.com", smtp: "smtp.mail.yahoo.com", smtpPort: 465, sec: "ssl", hint: "Yahoo needs an <b>app password</b>. Create one in your Yahoo account’s security settings and paste it here.", link: ["https://login.yahoo.com/account/security", "Open Yahoo security settings"] },
+  icloud: { label: "iCloud", imap: "imap.mail.me.com", smtp: "smtp.mail.me.com", smtpPort: 587, sec: "starttls", hint: "iCloud needs an <b>app-specific password</b>. Create one in your Apple account and paste it here.", link: ["https://account.apple.com", "Open your Apple account"] },
+  other: { label: "Other", imap: "", smtp: "", smtpPort: 465, sec: "ssl", hint: "Enter your provider’s mail servers. Use an app password if your provider offers one." }
+};
+let prov = "gmail";
+const errLine = m => `<span style="color:var(--red-text)">${esc(m)}</span>`;
+function paintConnect() {
+  const p = PROVIDERS[prov];
+  $("#provSeg").innerHTML = Object.entries(PROVIDERS).map(([k, v]) => `<button type="button" data-prov="${k}" class="${k === prov ? "on" : ""}">${v.label}</button>`).join("");
+  $("#provHint").innerHTML = p.hint + (p.link ? ` <a href="${p.link[0]}">${p.link[1]}</a>` : "") + "<small>Outlook and Hotmail need Microsoft’s own sign-in, which VEX doesn’t support yet. Your password is saved only on this phone.</small>";
+  $("#mServer").hidden = prov !== "other";
+}
+function openConnect() {
+  if (!NATIVE) { toast("Connecting your email works in the VEX Android app"); return; }
+  paintConnect(); $("#mStatus").textContent = ""; openSheet("#connectSheet"); setTimeout(() => $("#mEmail").focus(), 320);
+}
+$("#provSeg").addEventListener("click", e => { const btn = e.target.closest("[data-prov]"); if (btn) { prov = btn.dataset.prov; paintConnect(); } });
+$("#mConnect").addEventListener("click", async () => {
+  const p = PROVIDERS[prov], st = $("#mStatus"), btn = $("#mConnect");
+  const email = $("#mEmail").value.trim(), password = $("#mPass").value.replace(/\s+/g, "");
+  const imapHost = prov === "other" ? $("#mImap").value.trim() : p.imap, smtpHost = prov === "other" ? $("#mSmtp").value.trim() : p.smtp;
+  if (!validEmail(email)) { st.innerHTML = errLine("Enter your full email address."); return; }
+  if (!password) { st.innerHTML = errLine("Paste your app password."); return; }
+  if (!imapHost || !smtpHost) { st.innerHTML = errLine("Enter both mail servers."); return; }
+  btn.disabled = true; btn.textContent = "Connecting…"; st.textContent = "This can take a few seconds.";
+  const r = await native("connect", { email, password, imapHost, imapPort: 993, smtpHost, smtpPort: p.smtpPort, smtpSecurity: p.sec });
+  btn.disabled = false; btn.textContent = "Connect";
+  if (!r.ok) { st.innerHTML = errLine(r.code === "auth" ? "That email address or app password didn’t work. Check both and try again." : `Couldn’t connect: ${r.message || "unknown error"}`); return; }
+  st.textContent = "Connected. Loading your inbox…";
+  Object.assign(S.prefs, { mailMode: "live", liveEmail: email, notice: false });
+  Object.assign(S, { mails: [], incoming: [], sent: [], scheduled: [], draft: null, recent: [] });
+  store.set(KEY, stateSnapshot()); location.reload();
+});
+function doDisconnect() {
+  try { if (NATIVE && NATIVE.disconnect) NATIVE.disconnect(); } catch (e) {}
+  S.prefs.mailMode = "sample"; S.prefs.notice = true;
+  Object.assign(S, { mails: seed(), incoming: INCOMING.map(m => m.id), sent: [], scheduled: [], draft: null, recent: [] });
+  store.set(KEY, stateSnapshot()); location.reload();
+}
+let syncing = false;
+function fromServer(o) {
+  const id = "u" + o.uid, prev = byId(id);
+  const m = { id, uid: o.uid, live: true, acct: "mail", from: o.from || o.email || "Unknown", email: o.email || "", subject: o.subject || "(no subject)", body: o.body || "",
+    time: o.time || Date.now(), unread: !o.seen, star: !!o.flagged, clip: !!o.clip, messageId: o.messageId || "", status: "inbox", snoozeUntil: 0 };
+  if (prev) { if (prev.status === "snoozed") { m.status = "snoozed"; m.snoozeUntil = prev.snoozeUntil; } m.replied = prev.replied; }
+  return hydrate(m);
+}
+async function syncInbox(manual) {
+  if (!LIVE || syncing) return;
+  syncing = true; S.loading = true;
+  if (manual) toast("Checking for mail…");
+  if (!S.mails.length) render();
+  const r = await native("fetch", { limit: 50 });
+  syncing = false; S.loading = false;
+  if (!r.ok) {
+    render();
+    if (r.code === "auth") toast("Your app password stopped working. Reconnect in Settings.");
+    else if (manual || !S.mails.length) toast("Couldn’t reach your mail server. Check your internet.");
+    return;
+  }
+  const known = new Set(S.mails.map(m => m.id));
+  const fresh = (r.mails || []).map(fromServer).filter(m => !pendingRemote.has(m.id));
+  const added = fresh.filter(m => !known.has(m.id)).length;
+  S.mails = fresh.concat(S.mails.filter(m => pendingRemote.has(m.id)));
+  dateMemo.clear(); save(); render();
+  if (manual) toast(added ? plural(added, "new email") : "You’re up to date");
+}
+
+
+/* ================= updates: VEX checks GitHub and installs new builds ================= */
+async function checkForUpdate(manual) {
+  if (!CAN_UPDATE) return;
+  if (manual) toast("Checking for updates…");
+  const r = await native("checkUpdate", { repo: UPDATE_REPO });
+  S.prefs.lastUpdateCheck = Date.now(); save();
+  if (!r.ok) { if (manual) toast("Couldn’t check for updates. Check your internet."); return; }
+  update = r.latest > r.current && r.url ? { latest: r.latest, url: r.url } : null;
+  render();
+  if (!update) { if (manual) toast("VEX is up to date"); return; }
+  if (!manual && S.prefs.autoUpdate === "on" && S.prefs.updateTried !== update.latest) { S.prefs.updateTried = update.latest; save(); installUpdate(true); }
+  else if (manual) toast(`VEX build ${update.latest} is ready`);
+}
+async function installUpdate(auto) {
+  if (!update) return;
+  toast(auto ? `Updating VEX to build ${update.latest}…` : "Downloading the update…", null, 60000);
+  const r = await native("installUpdate", { url: update.url });
+  if (!r.ok) { toast("The update didn’t download. Try again later."); return; }
+  if (r.status === "allow") toast("Turn on Allow from this source, then come back and tap Update.", null, 8000);
+  else toast("Installing. If Android asks, tap Update.", null, 6000);
+}
+window.vexUpdateFailed = msg => toast(`The update didn’t install: ${msg}`, null, 7000);
+$("#updateBtn").addEventListener("click", () => installUpdate(false));
+$("#updateX").addEventListener("click", () => { $("#updateBar").hidden = true; });
+function maybeCheckForUpdate() { if (CAN_UPDATE && Date.now() - (S.prefs.lastUpdateCheck || 0) > 6 * H) checkForUpdate(false); }
+document.addEventListener("visibilitychange", () => { if (!document.hidden) maybeCheckForUpdate(); });
+
 /* ================= sign-in and sync with your Claude account ================= */
 const Sync = { status: "off", me: null, ref: null, unsub: null, src: Math.random().toString(36).slice(2), applied: 0, writing: false, again: false, timer: null, last: 0 };
 const cl = () => (window.claude && typeof window.claude.use === "function") ? window.claude : null;
@@ -1478,6 +1662,8 @@ function setSync(st) { Sync.status = st; paintAccount(); }
 const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 const APK = BUILD === "phone" && location.protocol === "file:"; // running inside the Android app
 function accountHTML() {
+  if (BUILD === "phone" && LIVE) return `<div class="acct-row"><span class="av">${icon("mail")}</span><span style="flex:1;min-width:0"><b>${esc(ACCOUNTS.mail.name)}</b><span><span class="syncdot on"></span>Connected. Pull down on your inbox to check for mail.</span></span><button class="btn sm" type="button" data-act="disconnect">Disconnect</button></div>`;
+  if (BUILD === "phone" && NATIVE) return `<div class="acct-row"><span class="av">${icon("mail")}</span><span style="flex:1;min-width:0"><b>Sample emails</b><span>Connect Gmail, Yahoo, iCloud or another inbox to see your real email.</span></span><button class="btn sm pri" type="button" data-act="connect">Connect</button></div>`;
   if (BUILD === "phone") return `<div class="acct-row"><span class="av">${icon("mail")}</span><span style="flex:1;min-width:0"><b>On this phone</b><span>Your mail and settings are saved on this phone. Sign-in and sync come with the PC version.</span></span>${standalone() || APK ? "" : '<button class="btn sm pri" type="button" data-act="install">Install</button>'}</div>`;
   const me = Sync.me, st = Sync.status;
   const ago = Sync.last ? (Date.now() - Sync.last < 60000 ? "just now" : Math.round((Date.now() - Sync.last) / 60000) + " min ago") : "";
@@ -1577,7 +1763,7 @@ function guideSteps() {
   steps.push({ title: "How to use it", html: `<ul><li><b>Swipe right</b> to archive and <b>left</b> to snooze. Change both in Settings.</li><li><b>Press and hold</b> an email to select several at once.</li><li><b>Pull down</b> on the inbox to check for new mail.</li><li><b>In search</b>, tap ${icon("tab")} or press Tab to accept the faded prediction.</li><li><b>While writing</b>, tap a word chip to finish your sentence.</li></ul>` });
   steps.push(BUILD === "claude"
     ? { title: "Sync your inbox", html: `<p>Sign in with your Claude account to keep VEX the same on all your devices.</p>${Sync.status === "on" ? `<p><b>You’re signed in.</b></p>` : `<button class="btn pri" type="button" data-act="signin">Sign in</button>`}<p>These are sample emails. Connect Gmail or Microsoft 365 in chat to see your real inbox.</p>` }
-    : { title: "Your mail stays here", html: `<p>VEX saves your mail and settings on this phone. Nothing gets sent anywhere.</p><p>These are sample emails for now. Your real inbox and syncing with a PC version come in later updates.</p>` });
+    : { title: "Your mail stays here", html: `<p>VEX saves your mail and settings on this phone.</p>${NATIVE ? (LIVE ? `<p><b>Your inbox is connected.</b> Pull down to check for mail.</p>` : `<p>These are sample emails. Connect Gmail, Yahoo, iCloud or another inbox to see your real mail.</p><button class="btn pri" type="button" data-act="connect">Connect your email</button>`) : `<p>These are sample emails. Connecting your real inbox works in the VEX Android app.</p>`}` });
   return steps;
 }
 let gIdx = 0;
@@ -1619,7 +1805,7 @@ document.addEventListener("keydown", e => {
     if (k === "j") step(1); else if (k === "k") step(-1);
     else if (k === "e") $("#rArchive").click(); else if (k === "s") $("#rStar").click();
     else if (k === "#") { const id = S.openId; afterRemove(id); trash(id); }
-    else if (k === "u") { const m = byId(S.openId); m.unread = true; save(); closeMail(); toast("Marked unread"); }
+    else if (k === "u") { const m = byId(S.openId); m.unread = true; remoteFlags(m.id, { seen: false }); save(); closeMail(); toast("Marked unread"); }
     else if (k === "r") { e.preventDefault(); $("#rReply").click(); }
   } else if ((k === "j" || k === "Enter") && S.viewIds.length && !$(".sheet.open")) { openMail(S.viewIds[0]); }
 });
@@ -1635,6 +1821,8 @@ function tick() {
 }
 applyPrefs(); buildIndex(); render(); tick();
 setInterval(tick, 20000);
+if (LIVE) { syncInbox(false); setInterval(() => { if (!document.hidden) syncInbox(false); }, 120000); }
+setTimeout(maybeCheckForUpdate, 3000);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 function finishLaunch() { $("#launch").classList.add("gone"); $("#launch").setAttribute("aria-hidden", "true"); }
 /* home-screen install for the phone app */

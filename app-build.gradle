@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.application'
+}
+
+def buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
+android {
+    namespace 'com.vexmail.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.vexmail.app'
+        minSdk 26
+        targetSdk 34
+        versionCode buildNumber
+        versionName "1.${buildNumber}"
+    }
+
+    signingConfigs {
+        vex {
+            storeFile file('vex.keystore')
+            storePassword 'vexmail'
+            keyAlias 'vex'
+            keyPassword 'vexmail'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.vex
+        }
+        debug {
+            signingConfig signingConfigs.vex
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    packaging {
+        resources {
+            excludes += ['META-INF/NOTICE.md', 'META-INF/LICENSE.md', 'META-INF/NOTICE.txt', 'META-INF/LICENSE.txt']
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
+}
