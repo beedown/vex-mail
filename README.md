@@ -58,12 +58,15 @@ There's no iPhone version of VEX yet.
 
 1. Open the **Calendar** tab and tap **Import** to paste your timetable or calendar text, or a calendar link (the iCal link from Google Calendar, Smartschool or Outlook).
 2. Type what you want to do in the box at the top, in your own words, in English or Dutch. VEX's built-in assistant works it out and shows its plan before you add it:
-   - "gaming 2h tonight" or "dentist next week": VEX picks a time that makes sense (dentists on weekdays, gaming in the evening after homework), says why, and offers other times.
+   - "gaming 2h tonight" or "dentist next week": VEX picks a time that makes sense (dentists on weekdays, gaming in the evening after homework, Chiro on Sunday afternoon), says why, and offers other times.
    - "study for math test friday": adds the test and plans study sessions on the days before.
-   - "gaming 3 times this week" or "piano twice a week": spreads sessions over different days and keeps planning them.
-   - "voetbal elke woensdag 18u-19u30" or "Lotte's birthday saturday": repeating events and birthdays.
-   - If something clashes with your timetable, VEX warns you and suggests a better time.
-3. VEX learns from you. When you finish sessions or pick times, it notices when you like to do things and plans them around then.
+   - "gaming 3 times this week" or "piano every other monday at 17u until christmas": spreads sessions out or repeats them.
+   - "gaming after voetbal wednesday": plans around what's already in your calendar.
+   - "gaming tonight and voetbal tomorrow at 17u": several things at once.
+   - Typos like "tomorow" or "wensday" are fine, and VEX shows how it read them.
+   - Buttons let you make it shorter, longer, earlier, later or move it to another day.
+3. Ask it things: "when am I free friday?", "what's on tomorrow?", "when is my next math test?", "how busy is my week?" or "when can I game this week?"
+4. VEX learns from you. When you finish sessions or pick times, it notices when you like to do things, including your own activities, and plans them around then.
 
 The assistant runs on your device. Nothing you type is sent anywhere.
 

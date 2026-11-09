@@ -56,3 +56,29 @@ dependencies {
     implementation 'com.sun.mail:android-mail:1.6.7'
     implementation 'com.sun.mail:android-activation:1.6.7'
 }
+
+// VEX gathers its own files from the top of the repository, so the build works with any version of the build file:
+// every Java file, the home screen widget, and the Microsoft Client ID when there is one.
+def repoRoot = rootProject.projectDir.parentFile
+copy {
+    from(repoRoot) { include '*.java' }
+    into file('src/main/java/com/vexmail/app')
+}
+copy {
+    from(new File(repoRoot, 'widget-layout.xml'))
+    into file('src/main/res/layout')
+    rename { 'vex_widget.xml' }
+}
+copy {
+    from(new File(repoRoot, 'widget-info.xml'))
+    into file('src/main/res/xml')
+    rename { 'vex_widget_info.xml' }
+}
+def idFile = new File(repoRoot, 'microsoft-client-id.txt')
+def page = file('src/main/assets/index.html')
+if (idFile.exists() && page.exists()) {
+    def id = idFile.getText('UTF-8').replaceAll('\\s', '')
+    if (id ==~ /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/) {
+        page.write(page.getText('UTF-8').replace('__MS_CLIENT_ID__', id), 'UTF-8')
+    }
+}
