@@ -127,11 +127,22 @@ jobs:
           path: out
           merge-multiple: true
 
-      - name: Publish the downloads
+      - name: Publish VEX for PC
+        if: ${{ needs.pc.result == 'success' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
-          name: VEX build ${{ github.run_number }}
-          body: "Phone: tap VEX.apk on your Android phone. Computer: download VEX-Setup.exe on your Windows PC."
-          files: out/*
-          fail_on_unmatched_files: false
+          tag_name: pc-${{ github.run_number }}
+          name: VEX for PC ${{ github.run_number }}
+          body: "For Windows: download VEX-Setup.exe and open it."
+          files: out/VEX-Setup.exe
+          make_latest: false
+
+      - name: Publish VEX for Android
+        if: ${{ needs.android.result == 'success' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-${{ github.run_number }}
+          name: VEX for Android ${{ github.run_number }}
+          body: "For your Android phone: open this page on your phone, tap VEX.apk, then open the file to install VEX."
+          files: out/VEX.apk
+          make_latest: true
