@@ -17,7 +17,7 @@ jobs:
 
       - name: Check the VEX files are in the right place
         run: |
-          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
+          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java Mail.java MailCheckJob.java ReminderReceiver.java AttachmentProvider.java VexWidget.java widget-layout.xml widget-info.xml AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
             if [ ! -f "$f" ]; then
               echo "::error::$f is missing from the top of the repository. Upload all the VEX files, not the folder they are in."
               exit 1
@@ -45,14 +45,25 @@ jobs:
       - name: Put the Android project together
         run: |
           set -e
+          if [ -f microsoft-client-id.txt ]; then
+            ID=$(tr -d ' \r\n\t' < microsoft-client-id.txt)
+            if echo "$ID" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'; then
+              sed -i "s/__MS_CLIENT_ID__/$ID/g" index.html
+              echo "Sign in with Microsoft is on"
+            else
+              echo "::warning::microsoft-client-id.txt doesn't contain a Client ID, so Sign in with Microsoft stays off"
+            fi
+          fi
           A=android/app/src/main
-          mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26"
+          mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26" "$A/res/layout" "$A/res/xml"
           cp settings.gradle gradle.properties android/
           cp project-build.gradle android/build.gradle
           cp app-build.gradle android/app/build.gradle
           cp vex.keystore android/app/vex.keystore
           cp AndroidManifest.xml "$A/AndroidManifest.xml"
-          cp MainActivity.java MailBridge.java "$A/java/com/vexmail/app/"
+          cp *.java "$A/java/com/vexmail/app/"
+          cp widget-layout.xml "$A/res/layout/vex_widget.xml"
+          cp widget-info.xml "$A/res/xml/vex_widget_info.xml"
           cp index.html "$A/assets/index.html"
           cp icon-maskable-512.png "$A/res/drawable-nodpi/vex_foreground.png"
           cat > "$A/res/mipmap-anydpi-v26/ic_launcher.xml" <<'EOF'
@@ -93,6 +104,15 @@ jobs:
           for f in index.html icon-512.png pc-main.js pc-preload.js pc-package.json; do
             if [ ! -f "$f" ]; then echo "::error::$f is missing from the top of the repository."; exit 1; fi
           done
+          if [ -f microsoft-client-id.txt ]; then
+            ID=$(tr -d ' \r\n\t' < microsoft-client-id.txt)
+            if echo "$ID" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'; then
+              sed -i "s/__MS_CLIENT_ID__/$ID/g" index.html
+              echo "Sign in with Microsoft is on"
+            else
+              echo "::warning::microsoft-client-id.txt doesn't contain a Client ID, so Sign in with Microsoft stays off"
+            fi
+          fi
           mkdir -p pc-app
           cp index.html pc-app/index.html
           cp icon-512.png pc-app/icon.png
