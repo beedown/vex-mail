@@ -22,11 +22,11 @@
 
 ## Download
 
-All downloads are on the [Releases page](https://github.com/beedown/vex-mail/releases).
+All downloads are on the [Releases page](https://github.com/beedown/vex-mail/releases). Each release has both: **VEX.apk** for Android phones and **VEX-Setup.exe** for Windows PCs.
 
 ### Android phone (Android 8 or newer)
 
-1. On your phone, open the newest **VEX for Android** release and tap **VEX.apk**.
+1. On your phone, open the newest release and tap **VEX.apk**.
 2. If Chrome warns you about the file, tap **Download anyway**, then **Open**.
 3. If Android says it can't install apps from this source, tap **Settings**, turn on **Allow from this source**, and go back.
 4. Tap **Install**. If Play Protect shows a warning, tap **More details**, then **Install anyway**.
@@ -35,7 +35,7 @@ Android shows these warnings for any app that doesn't come from the Play Store.
 
 ### Windows PC
 
-1. Open the newest **VEX for PC** release and download **VEX-Setup.exe**.
+1. Open the newest release and download **VEX-Setup.exe**.
 2. Open it. If Windows says "Windows protected your PC", click **More info**, then **Run anyway**. Windows shows this for apps that don't have a paid signing certificate.
 3. VEX installs, opens, and adds itself to your Start menu and desktop.
 
@@ -84,4 +84,4 @@ Found a bug or have an idea? [Open an issue](https://github.com/beedown/vex-mail
 
 ## Made by beedown
 
-VEX is made by beedown. It isn't made by or connected to Google, Microsoft, Yahoo, Apple or Anthropic.
+VEX is made by beedown. It isn't made by or connected to Google, Microsoft, Yahoo or Apple.

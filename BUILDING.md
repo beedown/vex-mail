@@ -6,8 +6,7 @@ This page is for whoever maintains VEX. People who just want the app should read
 
 GitHub builds both apps by itself every time files are uploaded to this repository:
 
-- **VEX for Android**: a release with `VEX.apk`, marked Latest.
-- **VEX for PC**: a release with `VEX-Setup.exe`.
+- One release per build, named **VEX** plus the build number, with both `VEX.apk` (Android) and `VEX-Setup.exe` (Windows) in it.
 
 The phone and PC apps check these releases for updates by themselves.
 
@@ -203,23 +202,19 @@ jobs:
           path: out
           merge-multiple: true
 
-      - name: Publish VEX for PC
-        if: ${{ needs.pc.result == 'success' }}
+      - name: Publish the downloads
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: pc-${{ github.run_number }}
-          name: VEX for PC ${{ github.run_number }}
-          body: "For Windows: download VEX-Setup.exe and open it."
-          files: out/VEX-Setup.exe
-          make_latest: false
+          tag_name: build-${{ github.run_number }}
+          name: VEX ${{ github.run_number }}
+          body: |
+            **Android phone:** open this page on your phone, tap **VEX.apk**, then open the file to install VEX.
+            **Windows PC:** download **VEX-Setup.exe** and open it.
 
-      - name: Publish VEX for Android
-        if: ${{ needs.android.result == 'success' }}
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: android-${{ github.run_number }}
-          name: VEX for Android ${{ github.run_number }}
-          body: "For your Android phone: open this page on your phone, tap VEX.apk, then open the file to install VEX."
-          files: out/VEX.apk
+            Already have VEX? It updates itself.
+          files: |
+            out/VEX.apk
+            out/VEX-Setup.exe
+          fail_on_unmatched_files: false
           make_latest: true
 ```

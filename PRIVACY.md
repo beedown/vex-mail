@@ -47,10 +47,6 @@ Like any website, these services can see your device's internet address when VEX
 
 No VEX account, no ads, no analytics or trackers, and no selling or sharing of your data. VEX's smart features, like sorting, predictions and planning, all run on your device.
 
-### The version inside Claude
-
-If you use VEX through its Claude link and sign in with your Claude account, your VEX settings and sample data sync through that account, and Anthropic's privacy policy applies to it.
-
 ### Deleting your data
 
 Remove email accounts in Settings, and remove calendars under Calendar, then Plan. Uninstalling VEX deletes everything it saved on your device.
@@ -77,7 +73,7 @@ VEX is provided as it is, without any warranty. beedown does its best, but VEX m
 
 ### Other companies
 
-VEX isn't made by or connected to Google, Microsoft, Yahoo, Apple or Anthropic. Their names belong to them.
+VEX isn't made by or connected to Google, Microsoft, Yahoo or Apple. Their names belong to them.
 
 ### Changes
 
