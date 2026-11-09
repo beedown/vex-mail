@@ -11,9 +11,13 @@ Every inbox in one place, sorted by what needs you.
 
 Red ✗? Click it, click **apk**, then the step with the ✗, and send a screenshot to Claude.
 
+## Smart calendar
+
+Open the **Calendar** tab. Tap **Import** to paste your school timetable (English or Dutch, or a copied table) or to add an iCal link from Google Calendar, Smartschool or Outlook, which stays up to date. Under **Plan**, add what you want to do, like gaming 5 times a week or 4 hours of study before an exam, and VEX fits it into your free time. You can also type things like "gaming 2h tonight" in the box at the top.
+
 ## VEX for PC
 
-Every build also makes **VEX-Setup.exe** for Windows. Download it from this repository's **Releases** page and open it. If Windows shows "Windows protected your PC", click **More info**, then **Run anyway**. VEX installs, opens, and adds itself to your Start menu and desktop. Connect your email in **Settings**; you can use the same app password as on your phone. The PC version updates itself too.
+Every build makes two releases: **VEX for Android** (with VEX.apk) and **VEX for PC** (with VEX-Setup.exe). On your PC, open the newest **VEX for PC** release on the **Releases** page, download VEX-Setup.exe and open it. If Windows shows "Windows protected your PC", click **More info**, then **Run anyway**. VEX installs, opens, and adds itself to your Start menu and desktop. Connect your email in **Settings**; you can use the same app password as on your phone. The PC version updates itself too.
 
 ## Several email addresses
 
@@ -31,7 +35,7 @@ In VEX, open **Settings** and tap **Connect**. Gmail, Yahoo and iCloud need an *
 - **Yahoo:** create one in your Yahoo account's security settings.
 - **iCloud:** create an app-specific password in your Apple account.
 
-Outlook and Hotmail aren't supported yet. Your password is saved only on your phone.
+Hotmail and Outlook can't sign in with a password anymore (Microsoft's rule). Forward your Hotmail to your Gmail to read it in VEX; the Hotmail tab in Connect shows how. Your password is saved only on your device.
 
 ## The build file
 
@@ -165,12 +169,23 @@ jobs:
           path: out
           merge-multiple: true
 
-      - name: Publish the downloads
+      - name: Publish VEX for PC
+        if: ${{ needs.pc.result == 'success' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
-          name: VEX build ${{ github.run_number }}
-          body: "Phone: tap VEX.apk on your Android phone. Computer: download VEX-Setup.exe on your Windows PC."
-          files: out/*
-          fail_on_unmatched_files: false
+          tag_name: pc-${{ github.run_number }}
+          name: VEX for PC ${{ github.run_number }}
+          body: "For Windows: download VEX-Setup.exe and open it."
+          files: out/VEX-Setup.exe
+          make_latest: false
+
+      - name: Publish VEX for Android
+        if: ${{ needs.android.result == 'success' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-${{ github.run_number }}
+          name: VEX for Android ${{ github.run_number }}
+          body: "For your Android phone: open this page on your phone, tap VEX.apk, then open the file to install VEX."
+          files: out/VEX.apk
+          make_latest: true
 ```

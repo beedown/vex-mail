@@ -417,6 +417,26 @@ public class MailBridge {
         });
     }
 
+    /** Downloads a calendar (.ics) from a link for the calendar's subscriptions. */
+    @JavascriptInterface
+    public void httpGet(final String id, final String json) {
+        runJob(id, () -> {
+            String url = new JSONObject(json).getString("url").replaceFirst("^webcals?://", "https://");
+            HttpURLConnection c = open(url);
+            int code = c.getResponseCode();
+            if (code != 200) throw new Exception("The calendar link answered " + code);
+            ByteArrayOutputStream buf = new ByteArrayOutputStream();
+            try (InputStream in = c.getInputStream()) {
+                byte[] b = new byte[16384];
+                int n;
+                while ((n = in.read(b)) > 0 && buf.size() < 4000000) buf.write(b, 0, n);
+            }
+            JSONObject o = new JSONObject();
+            o.put("text", buf.toString("UTF-8"));
+            return o;
+        });
+    }
+
     /* ================= app updates from GitHub Releases ================= */
 
     private long currentBuild() throws Exception {
@@ -447,7 +467,7 @@ public class MailBridge {
     public void checkUpdate(final String id, final String json) {
         runJob(id, () -> {
             String repo = new JSONObject(json).getString("repo");
-            HttpURLConnection c = open("https://api.github.com/repos/" + repo + "/releases/latest");
+            HttpURLConnection c = open("https://api.github.com/repos/" + repo + "/releases?per_page=20");
             c.setRequestProperty("Accept", "application/vnd.github+json");
             int code = c.getResponseCode();
             if (code != 200) throw new Exception("GitHub answered " + code);
@@ -457,19 +477,31 @@ public class MailBridge {
                 int n;
                 while ((n = in.read(b)) > 0) buf.write(b, 0, n);
             }
-            JSONObject release = new JSONObject(buf.toString("UTF-8"));
-            String digits = release.optString("tag_name", "").replaceAll("[^0-9]", "");
+            // newest release that has an Android app in it (PC releases are skipped)
+            JSONArray releases = new JSONArray(buf.toString("UTF-8"));
+            long newest = 0;
             String url = "";
-            JSONArray assets = release.optJSONArray("assets");
-            if (assets != null) {
-                for (int i = 0; i < assets.length(); i++) {
-                    JSONObject a = assets.getJSONObject(i);
-                    if (a.optString("name", "").toLowerCase().endsWith(".apk")) url = a.optString("browser_download_url", "");
+            for (int i = 0; i < releases.length(); i++) {
+                JSONObject rel = releases.getJSONObject(i);
+                if (rel.optBoolean("draft") || rel.optBoolean("prerelease")) continue;
+                String apk = "";
+                JSONArray assets = rel.optJSONArray("assets");
+                if (assets != null) {
+                    for (int j = 0; j < assets.length(); j++) {
+                        JSONObject a = assets.getJSONObject(j);
+                        if (a.optString("name", "").toLowerCase().endsWith(".apk")) apk = a.optString("browser_download_url", "");
+                    }
+                }
+                String digits = rel.optString("tag_name", "").replaceAll("[^0-9]", "");
+                long number = digits.isEmpty() ? 0 : Long.parseLong(digits);
+                if (!apk.isEmpty() && number > newest) {
+                    newest = number;
+                    url = apk;
                 }
             }
             JSONObject o = new JSONObject();
             o.put("current", currentBuild());
-            o.put("latest", digits.isEmpty() ? 0 : Long.parseLong(digits));
+            o.put("latest", newest);
             o.put("url", url);
             return o;
         });

@@ -53,7 +53,7 @@
 }
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
-body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:var(--fs);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body{margin:0;height:100%;overflow:hidden;overflow:clip;background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:var(--fs);line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:90;background:#000}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 input,textarea{font:inherit;color:inherit}
@@ -63,7 +63,7 @@ img{max-width:100%}
 [hidden]{display:none!important}
 .sp{flex:1}
 
-.app{position:relative;max-width:540px;height:100%;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.app{position:relative;max-width:540px;height:100%;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;overflow:clip;background:var(--bg)}
 
 /* launch: the one orchestrated moment */
 .launch{position:fixed;inset:0;z-index:100;background:#000;transition:opacity .55s}
@@ -222,7 +222,7 @@ mark{background:transparent;color:var(--red-text);font-weight:700;text-decoratio
 .fab{transition:width .2s,padding .2s}
 .fab.mini{width:56px;padding:0;justify-content:center}
 .fab.mini span{display:none}
-.nav{position:absolute;left:0;right:0;bottom:0;z-index:24;display:grid;grid-template-columns:repeat(4,1fr);padding:0 4px 4px;background:var(--surface);border-top:1px solid var(--line-2)}
+.nav{position:absolute;left:0;right:0;bottom:0;z-index:24;display:grid;grid-template-columns:repeat(5,1fr);padding:0 4px 4px;background:var(--surface);border-top:1px solid var(--line-2)}
 .nav button{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 6px;font-family:var(--f-cond);font-weight:600;font-size:14px;color:var(--faint)}
 .nav button::before{content:"";position:absolute;top:-1px;left:26%;right:26%;height:2px}
 .nav button.on{color:var(--red-text)}
@@ -377,6 +377,86 @@ textarea.field{height:auto;min-height:170px;padding:12px 14px;line-height:1.55;r
 .acc-dot{flex:none;width:13px;height:13px;margin:0 8px 0 4px;transform:rotate(45deg)}
 .acct-row+.acct-row{border-top:1px solid var(--line)}
 select.field{-webkit-appearance:none;appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a69d8e' stroke-width='2.2'%3E%3Cpath d='M5 9l7 7 7-7'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.cal-top{display:flex;align-items:center;gap:10px;margin:12px 4px 10px}
+.qa{display:flex;gap:8px;margin:0 4px}
+.qa .field{flex:1;min-width:0}
+.qa .btn{height:48px}
+.qa-prev{min-height:20px;margin:6px 6px 4px;font-size:13.5px;color:var(--muted)}
+.qa-prev b{color:var(--ink)}
+.qa-prev em{font-style:normal;color:var(--red-text)}
+.wk{display:flex;align-items:center;gap:2px;margin:8px 0 6px}
+.wk-days{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wk-d{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 0 6px;border-radius:8px;border:1px solid transparent;color:var(--muted)}
+.wk-d small{font-family:var(--f-cond);font-size:13px;font-weight:600}
+.wk-d b{font-family:var(--f-title);font-size:21px;font-weight:400;color:var(--ink);line-height:1.1}
+.wk-d i{display:flex;gap:3px;height:6px}
+.wk-d i em{width:5px;height:5px;transform:rotate(45deg);background:var(--faint)}
+.wk-d.today{border-color:var(--line-2)}
+.wk-d.on{background:var(--red);border-color:var(--red);color:#fff}
+.wk-d.on b{color:#fff}
+.wk-d.on i em{background:#fff}
+.day-head{display:flex;align-items:center;justify-content:space-between;margin:6px 6px 0}
+.day-head b{font-family:var(--f-title);font-weight:400;font-size:21px}
+.insight{margin:8px 0 12px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--red)}
+.insight p{margin:0 0 4px;font-size:14px;color:var(--muted)}
+.insight p b{color:var(--ink)}
+.insight .btn{margin-top:8px}
+.allday{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px 54px}
+.adc{height:30px;padding:0 10px;border-radius:5px;background:color-mix(in srgb,var(--c) 22%,transparent);border-left:3px solid var(--c);font-size:13.5px;font-weight:600}
+.tl{position:relative;margin:4px 0 20px}
+.tl-h{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line);pointer-events:none}
+.tl-h span{position:absolute;left:4px;top:-9px;padding-right:6px;font-family:var(--f-cond);font-size:13px;color:var(--faint);background:var(--bg)}
+.bgon .tl-h span{background:transparent}
+.tl-now{position:absolute;left:46px;right:0;height:2px;background:var(--red);pointer-events:none;z-index:3}
+.tl-now::before{content:"";position:absolute;left:-5px;top:-4px;width:9px;height:9px;background:var(--red);transform:rotate(45deg)}
+.ev{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;padding:5px 8px 4px 10px;border-radius:6px;text-align:left;background:color-mix(in srgb,var(--c) 20%,var(--surface));border-left:3px solid var(--c);color:var(--ink)}
+.ev b{display:flex;align-items:center;gap:5px;max-width:100%;font-size:13.5px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev b svg{width:14px;height:14px;color:var(--c)}
+.ev small{font-family:var(--f-cond);font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.ev.plan{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--c) 16%,var(--surface)) 0 8px,color-mix(in srgb,var(--c) 8%,var(--surface)) 8px 16px);border:1px dashed color-mix(in srgb,var(--c) 70%,transparent);border-left:3px solid var(--c)}
+.ev.plan.locked{border-style:solid}
+.ev.plan.done{opacity:.6}
+.ev.plan.done b{text-decoration:line-through}
+.ev.plan.missed{opacity:.35}
+.ag{width:100%;display:flex;gap:12px;align-items:flex-start;padding:11px 14px;text-align:left;border-left:3px solid var(--c)}
+.ag+.ag{border-top:1px solid var(--line)}
+.ag-t{flex:none;width:56px;font-family:var(--f-cond);font-weight:600;font-size:15px;color:var(--muted)}
+.ag-b{min-width:0}
+.ag-b b{display:block;font-weight:600}
+.ag-b small{font-size:13px;color:var(--faint)}
+.goal{width:100%;display:flex;gap:12px;align-items:center;padding:12px 14px;text-align:left}
+.goal+.goal{border-top:1px solid var(--line)}
+.g-ic{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--c) 20%,transparent);color:var(--c)}
+.g-ic svg{width:20px;height:20px}
+.g-tx{flex:1;min-width:0}
+.g-tx b{display:block;font-weight:700}
+.g-tx small{display:block;font-size:13px;color:var(--muted)}
+.bar{display:block;height:5px;margin-top:7px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c)}
+.cchips{display:flex;flex-wrap:wrap;gap:6px}
+.cchip{display:flex;align-items:center;gap:6px;height:34px;padding:0 11px;border-radius:6px;border:1px solid var(--line-2);font-family:var(--f-cond);font-weight:600;font-size:15px;color:var(--muted)}
+.cchip svg{width:15px;height:15px;color:var(--c)}
+.cchip.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--ink)}
+.row3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
+.glabel{margin-top:4px;font-family:var(--f-cond);font-weight:600;font-size:15px;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper .btn{width:44px;padding:0;font-size:22px}
+.pi-info{margin:0;line-height:1.6}
+.pi-info svg{width:16px;height:16px;vertical-align:-3px;color:var(--red-text)}
+.pi-info small{color:var(--muted)}
+.mini-sel{width:auto;height:38px;padding-left:10px}
+.sub-note{display:block;font-size:12.5px;color:var(--faint)}
+.opt span svg{width:15px;height:15px;vertical-align:-2px}
+#impText{min-height:140px}
+.sharp .ev,.sharp .adc,.sharp .wk-d,.sharp .insight,.sharp .cchip{border-radius:0}
+@media (min-width:980px){
+  .app.caltab #reader{display:none}
+  .app.caltab .scroll{grid-column:2 / 4;border-right:0}
+  .app.caltab .list{max-width:980px}
+}
+.linkbtn{color:var(--red-text);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+#provHint .steps{margin:10px 0 0;padding-left:20px}
+#provHint .steps li{margin-bottom:6px}
 .toast{position:absolute;left:14px;right:14px;bottom:84px;z-index:70;min-height:52px;display:flex;align-items:center;gap:12px;padding:0 8px 0 16px;border-radius:8px;background:var(--ink);color:var(--bg);font-weight:600;font-size:14.5px;box-shadow:var(--shadow);transform:translateY(16px);opacity:0;pointer-events:none;transition:transform .22s,opacity .22s}
 .toast.show{transform:none;opacity:1;pointer-events:auto}
 .toast button{height:38px;padding:0 12px;border-radius:6px;font-family:var(--f-cond);font-weight:700;font-size:16px;color:var(--toast-btn)}
@@ -439,6 +519,15 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
   <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 5h18v16H3zM3 10h18M8 3v4M16 3v4"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
   <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M20 11a8 8 0 1 0-2.4 5.7M20 4v7h-7"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-game" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M7 7h10a5 5 0 0 1 5 5v1.5a3.5 3.5 0 0 1-6.2 2.2L14.5 14h-5l-1.3 1.7A3.5 3.5 0 0 1 2 13.5V12a5 5 0 0 1 5-5z"/><path d="M7.5 9.5v4M5.5 11.5h4M16 10.5h.5M18 12.5h.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 5h6l3 2 3-2h6v14h-6l-3 2-3-2H3zM12 7v14"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M3 9v6M6.5 6.5v11M17.5 6.5v11M21 9v6M6.5 12h11"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20a6.5 6.5 0 0 1 13 0M16 4.3a3.5 3.5 0 0 1 0 6.4M21.5 20a6.5 6.5 0 0 0-3.5-5.8"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 20 14 10M14 3l1.2 2.8L18 7l-2.8 1.2L14 11l-1.2-2.8L10 7l2.8-1.2zM19 12l.7 1.6 1.6.7-1.6.7L19 16.6l-.7-1.6-1.6-.7 1.6-.7z"/></symbol>
+  <symbol id="i-fwd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"><path d="M9 4l8 8-8 8"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
   <symbol id="i-nudge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 4h16v12H9l-5 4zM9 9h6"/></symbol>
 </defs></svg>
 
@@ -505,11 +594,12 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
   <div class="suggest" id="suggest" role="listbox" aria-label="Search suggestions" hidden></div>
   </div>
 
-  <button class="fab" id="composeBtn" type="button" aria-label="Compose"><svg aria-hidden="true"><use href="#i-pen"/></svg><span>Compose</span></button>
+  <button class="fab" id="composeBtn" type="button" aria-label="Compose"><svg aria-hidden="true"><use id="fabIcon" href="#i-pen"/></svg><span id="fabLabel">Compose</span></button>
 
   <nav class="nav" id="nav" aria-label="Sections">
     <button type="button" data-tab="inbox" class="on"><svg aria-hidden="true"><use href="#i-inbox"/></svg>Inbox<span class="badge" id="unreadBadge" hidden></span></button>
     <button type="button" data-tab="needs"><svg aria-hidden="true"><use href="#i-bolt"/></svg>Needs you<span class="badge" id="needsBadge" hidden></span></button>
+    <button type="button" data-tab="cal"><svg aria-hidden="true"><use href="#i-cal"/></svg>Calendar</button>
     <button type="button" data-tab="later"><svg aria-hidden="true"><use href="#i-clock"/></svg>Later</button>
     <button type="button" data-tab="settings"><svg aria-hidden="true"><use href="#i-sliders"/></svg>Settings</button>
   </nav>
@@ -619,6 +709,59 @@ select.field{-webkit-appearance:none;appearance:none;padding-right:38px;backgrou
       <div class="swatches" id="aeColors"></div>
       <button class="btn pri" id="aeSave" type="button">Save</button>
       <button class="btn" id="aeRemove" type="button">Remove this email from VEX</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="eventSheet" aria-label="Event">
+    <div class="hd"><h3 id="evTitle">New event</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="bd stack">
+      <input class="field" id="evName" type="text" placeholder="What is it?" aria-label="Event name">
+      <div class="cchips" id="evCats"></div>
+      <div class="row3"><input class="field" id="evDate" type="date" aria-label="Date"><input class="field" id="evStart" type="time" aria-label="Starts"><input class="field" id="evEnd" type="time" aria-label="Ends"></div>
+      <label class="track"><input type="checkbox" id="evAllDay"> All day</label>
+      <label class="track"><input type="checkbox" id="evWeekly"> Repeats every week</label>
+      <input class="field" id="evLoc" type="text" placeholder="Where (optional)" aria-label="Location">
+      <p class="hint" id="evSrc"></p>
+      <div class="actions"><button class="btn pri" id="evSave" type="button">Save</button><button class="btn" id="evDelete" type="button">Delete</button></div>
+    </div>
+  </section>
+  <section class="sheet" id="planSheet" aria-label="Planned">
+    <div class="hd"><h3 id="piTitle">Planned</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="bd stack">
+      <p class="pi-info" id="piInfo"></p>
+      <div class="actions"><button class="btn pri" id="piDone" type="button"><svg><use href="#i-check"/></svg>Done</button><button class="btn" id="piMove" type="button"><svg><use href="#i-wand"/></svg>Another time</button><button class="btn" id="piLock" type="button">Lock it in</button><button class="btn" id="piSkip" type="button">Skip</button></div>
+    </div>
+  </section>
+  <section class="sheet" id="goalSheet" aria-label="Plan something">
+    <div class="hd"><h3 id="goalTitle">Plan something</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="bd stack">
+      <div class="cchips" id="gCats"></div>
+      <input class="field" id="gName" type="text" placeholder="Name it, like Fortnite or Math exam" aria-label="Name">
+      <div class="glabel">How long each time</div><div class="seg wide" id="gLen"></div>
+      <div class="glabel">How often</div><div class="seg wide" id="gMode"></div>
+      <div id="gWeek" class="stepper"><button class="btn sm" type="button" data-step="-1" aria-label="Fewer">−</button><b id="gTimes">3 times a week</b><button class="btn sm" type="button" data-step="1" aria-label="More">+</button></div>
+      <div id="gDead" class="stack"><input class="field" id="gDate" type="date" aria-label="Deadline"><div class="glabel">Time needed in total</div><div class="seg wide" id="gTotal"></div></div>
+      <div class="glabel">Best time of day</div><div class="seg wide" id="gWhen"></div>
+      <div class="actions"><button class="btn pri" id="goalSave" type="button"><svg><use href="#i-wand"/></svg>Plan it</button><button class="btn" id="goalDelete" type="button">Remove</button></div>
+    </div>
+  </section>
+  <section class="sheet" id="importSheet" aria-label="Import a calendar">
+    <div class="hd"><h3>Import your calendar</h3><span class="sp"></span><button class="tbtn" data-close type="button" aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+    <div class="bd stack">
+      <div class="seg wide" id="impMode"></div>
+      <div id="impPaste" class="stack">
+        <p class="hint">Paste your school timetable, a copied table, or calendar text. English and Dutch both work, like “Maandag 8u25-9u15 Wiskunde” or “Mon 8:25-9:15 Math (room 12)”.</p>
+        <textarea class="field" id="impText" placeholder="Paste here" aria-label="Calendar text"></textarea>
+        <div class="actions"><button class="btn" id="impRead" type="button">Read it</button><button class="btn pri" id="impAdd" type="button" hidden>Add to calendar</button></div>
+        <div id="impPrev"></div>
+      </div>
+      <div id="impLink" class="stack" hidden>
+        <p class="hint">Paste the iCal link from Google Calendar (Settings, then Secret address in iCal format), Smartschool, Outlook or your school. VEX keeps it up to date.</p>
+        <input class="field" id="impUrl" type="url" placeholder="https://… or webcal://…" aria-label="Calendar link">
+        <input class="field" id="impName" type="text" placeholder="Name (optional), like School" aria-label="Calendar name">
+        <p class="hint" id="impUrlNote"></p>
+        <button class="btn pri" id="impSub" type="button">Add calendar</button>
+      </div>
     </div>
   </section>
   <div class="toast" id="toast" role="status"><span id="toastMsg"></span><span class="sp"></span><button type="button" id="toastUndo">Undo</button></div>
@@ -858,7 +1001,7 @@ if (LIVE) {
   S.mails = S.mails.filter(m => ACCOUNTS[m.acct]);
 }
 S.mails.forEach(hydrate);
-function stateSnapshot() { return { mails: S.mails, incoming: S.incoming, sent: S.sent, scheduled: S.scheduled, draft: S.draft, recent: S.recent, learn: S.learn, stats: S.stats, prefs: S.prefs }; }
+function stateSnapshot() { return { cal: S.cal, mails: S.mails, incoming: S.incoming, sent: S.sent, scheduled: S.scheduled, draft: S.draft, recent: S.recent, learn: S.learn, stats: S.stats, prefs: S.prefs }; }
 function save() { store.set(KEY, stateSnapshot()); if (typeof syncSoon === "function") syncSoon(); }
 const darkNow = () => S.prefs.theme === "dark" || (S.prefs.theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
 function applyPrefs() {
@@ -931,10 +1074,12 @@ function render() {
   $("#selbar").hidden = !S.selecting;
   $("#selCount").textContent = `${S.selected.size} selected`;
   $("#acctLabel").textContent = S.account === "all" ? "All inboxes" : ACCOUNTS[S.account].name;
-  const settings = S.tab === "settings";
-  $("#searchbar").hidden = settings;
+  const settings = S.tab === "settings", calTab = S.tab === "cal";
+  app.classList.toggle("caltab", calTab);
+  $("#searchbar").hidden = settings || calTab;
   $("#chips").hidden = settings || S.tab !== "inbox";
-  $("#notice").hidden = settings || !S.prefs.notice || LIVE;
+  $("#fabIcon").setAttribute("href", calTab ? "#i-plus" : "#i-pen"); $("#fabLabel").textContent = calTab ? "Add" : "Compose"; $("#composeBtn").setAttribute("aria-label", calTab ? "Add to calendar" : "Compose");
+  $("#notice").hidden = settings || calTab || !S.prefs.notice || LIVE;
   $("#updateBar").hidden = !update || settings || S.search.active;
   if (update) $("#updateText").textContent = `VEX build ${update.latest} is ready.`;
   if (BUILD === "phone") { $("#notice span").textContent = NATIVE ? "These are sample emails. Connect your real inbox to see your own mail." : "These are sample emails. Connecting your real inbox works in the VEX Android app."; $("#noticeConnect").hidden = !NATIVE || LIVE; }
@@ -942,6 +1087,7 @@ function render() {
   $("#refreshBtn").hidden = !LIVE;
   if (S.search.active) { renderSearch(); return; }
   if (settings) { setTitle("Settings", ""); renderSettings(); return; }
+  if (calTab) { renderCalendar(); return; }
   let mails;
   if (S.tab === "inbox") {
     mails = S.filter === "all" ? all : all.filter(m => m.bucket === S.filter);
@@ -1249,6 +1395,8 @@ function paintReader(m) {
     smart += `<span class="tag ${due ? "due" : "event"}" style="height:38px;padding:0 12px;font-size:15px">${icon(due ? "clock" : "cal")}${due ? dueText(dt) : fmtDate(dt)}</span>`;
     if (r) smart += `<button class="btn sm" type="button" data-r="remind" data-t="${r.getTime()}">${icon("bell")}Remind me ${esc(fmtWhen(r.getTime()))}</button>`;
   }
+  if (dt && m.bucket !== "done") smart += `<button class="btn sm" type="button" data-r="addcal">${icon("cal")}Add to calendar</button>`;
+  if (dt && isDue(m) && dt.date > Date.now()) smart += `<button class="btn sm" type="button" data-r="plantime">${icon("wand")}Plan time for it</button>`;
   if (m.bucket === "wait") smart += `<button class="btn sm" type="button" data-r="nudge">${icon("nudge")}Nudge ${esc(first(m.from))}</button>`;
   if (m.bucket === "junk") { const k = S.mails.filter(x => x.email === m.email && x.status === "inbox").length; smart += `<button class="btn sm" type="button" data-r="cleanup">${icon("broom")}Archive ${k > 1 ? "all " + k : "it"} from ${esc(m.from)}</button>`; }
   let body = esc(m.body);
@@ -1299,6 +1447,8 @@ $("#readBody").addEventListener("click", e => {
   else if (r.dataset.r === "nudge") replyTo(m, "Hi! Just checking in on this. ");
   else if (r.dataset.r === "cleanup") { const ids = S.mails.filter(x => x.email === m.email && x.status === "inbox").map(x => x.id); closeMail(); archive(ids); }
   else if (r.dataset.r === "copy") copyText(m.email);
+  else if (r.dataset.r === "addcal") calFromMail(m, false);
+  else if (r.dataset.r === "plantime") calFromMail(m, true);
 });
 async function copyText(t) {
   try { await navigator.clipboard.writeText(t); toast("Email address copied"); return; } catch (e) {}
@@ -1349,6 +1499,663 @@ $("#acctBtn").addEventListener("click", () => {
   openSheet("#acctSheet");
 });
 $("#acctMenu").addEventListener("click", e => { const b = e.target.closest("[data-acct]"); if (!b) return; S.account = b.dataset.acct; closeSheets(); render(); });
+
+/* ================= smart calendar: import, plan, quick add (all on-device) ================= */
+const MIN = 60000;
+const CATS = {
+  school: { name: "School", icon: "book", color: "var(--ink)" },
+  study: { name: "Study", icon: "book", color: "#4fd2ee" },
+  gaming: { name: "Gaming", icon: "game", color: "var(--red)" },
+  sport: { name: "Sport", icon: "dumbbell", color: "#4ee06a" },
+  chill: { name: "Chill", icon: "moon", color: "#a78bfa" },
+  chores: { name: "Chores", icon: "broom", color: "#f2c440" },
+  social: { name: "Friends", icon: "people", color: "#ff7ab8" },
+  other: { name: "Other", icon: "cal", color: "#a69d8e" }
+};
+const CAT_WORDS = [
+  ["gaming", /\b(gam(e|es|ing)|fortnite|minecraft|roblox|valorant|league|lol|cod|fifa|fc ?2\d|ps[45]|playstation|xbox|switch|steam|gamen|spel(len)?)\b/i],
+  ["study", /\b(stud(y|ie|eren)|homework|huiswerk|exam(en)?|test|toets|leren|revis(e|ion)|taak|taken|assignment|project|les(sen)? (voorbereiden|leren))\b/i],
+  ["sport", /\b(sport|sporten|football|soccer|voetbal|gym|training|trainen|run(ning)?|lopen|basket(bal)?|tennis|swim(ming)?|zwemmen|fitness|hockey|volley(bal)?|judo|dans(en)?|dance)\b/i],
+  ["social", /\b(party|feest(je)?|friends?|vrienden|date|birthday|verjaardag|hang ?out|afspraak met)\b/i],
+  ["chill", /\b(chill|movie|film|netflix|series?|reeks|relax|read(ing)?|lezen|nap)\b/i],
+  ["chores", /\b(clean(ing)?|chores?|kuisen|opruimen|afwas|dishes|laundry|was|groceries|boodschappen|shopping)\b/i],
+  ["school", /\b(school|class|les|lesson|lecture|math|wiskunde|frans|french|engels|english|nederlands|dutch|history|geschiedenis|biolog(y|ie)|chemi(stry|e)|fysica|physics|aardrijkskunde|geography|informatica|lo\b)/i]
+];
+const guessCat = t => (CAT_WORDS.find(([, re]) => re.test(t)) || ["other"])[0];
+const WD = { sunday: 0, sun: 0, zondag: 0, zo: 0, monday: 1, mon: 1, maandag: 1, ma: 1, tuesday: 2, tue: 2, tues: 2, dinsdag: 2, di: 2, wednesday: 3, wed: 3, woensdag: 3, wo: 3,
+  thursday: 4, thu: 4, thur: 4, thurs: 4, donderdag: 4, do: 4, friday: 5, fri: 5, vrijdag: 5, vr: 5, saturday: 6, sat: 6, zaterdag: 6, za: 6 };
+const WD_LONG_RE = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/i;
+const WD_ANY_RE = /\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag|mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun|ma|di|wo|do|vr|za|zo)\b\.?/i;
+const MONTHS = { jan: 0, january: 0, januari: 0, feb: 1, february: 1, februari: 1, mar: 2, march: 2, maart: 2, mrt: 2, apr: 3, april: 3, may: 4, mei: 4, jun: 5, june: 5, juni: 5,
+  jul: 6, july: 6, juli: 6, aug: 7, august: 7, augustus: 7, sep: 8, sept: 8, september: 8, oct: 9, okt: 9, october: 9, oktober: 9, nov: 10, november: 10, dec: 11, december: 11 };
+
+const dayStart = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const addDays = (t, n) => { const d = new Date(t); d.setDate(d.getDate() + n); return d.getTime(); };
+const weekStart = t => { const d = new Date(dayStart(t)); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
+const atMin = (day, m) => { const d = new Date(day); d.setHours(0, m, 0, 0); return d.getTime(); };
+const minsOf = t => { const d = new Date(t); return d.getHours() * 60 + d.getMinutes(); };
+const hm = t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const fmtDur = m => { m = Math.round(m); if (!m) return "0h"; const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h ${r}m` : `${h}h`) : `${r}m`; };
+const dayName = (t, style = "short") => new Date(t).toLocaleDateString([], { weekday: style });
+const dayTitle = t => { const today = dayStart(Date.now()); return t === today ? "Today" : t === addDays(today, 1) ? "Tomorrow" : t === addDays(today, -1) ? "Yesterday" : new Date(t).toLocaleDateString([], { weekday: "long", day: "numeric", month: "short" }); };
+const dayWord = t => { const s = dayTitle(t); return s === "Today" || s === "Tomorrow" || s === "Yesterday" ? s.toLowerCase() : s; };
+const uid = p => p + Math.random().toString(36).slice(2, 10);
+const pad2 = n => String(n).padStart(2, "0");
+const toDateInput = t => { const d = new Date(t); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+const toTimeInput = t => { const d = new Date(t); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+const fromInputs = (date, time) => { const [y, mo, da] = date.split("-").map(Number), [h, mi] = (time || "00:00").split(":").map(Number); return new Date(y, mo - 1, da, h, mi).getTime(); };
+
+const CAL_DEF = { events: [], subs: [], goals: [], plan: [], settings: { wake: 420, sleep: 1380, gap: 10, gameMax: 180 }, lastPlan: 0, report: null };
+S.cal = Object.assign(JSON.parse(JSON.stringify(CAL_DEF)), saved && saved.cal);
+S.cal.settings = Object.assign({}, CAL_DEF.settings, S.cal.settings);
+const CAL = { view: "day", day: dayStart(Date.now()), scrolled: false, preview: null, editing: null, goalEdit: null, imp: null };
+const goalOf = id => S.cal.goals.find(g => g.id === id);
+const catOf = c => CATS[c] || CATS.other;
+
+/* ---------- recurring events ---------- */
+function occurrences(ev, from, to) {
+  const dur = Math.max(0, ev.end - ev.start), out = [], r = ev.rrule;
+  if (!r) { if (ev.end > from && ev.start < to) out.push({ ev, start: ev.start, end: ev.end }); return out; }
+  const until = r.until || Infinity, interval = r.interval || 1, ex = new Set((ev.ex || []).map(dayStart)), baseMin = minsOf(ev.start);
+  let n = 0;
+  const emit = s => { n++; if (r.count && n > r.count) return false; if (!ex.has(dayStart(s))) { const e = s + dur; if (e > from && s < to) out.push({ ev, start: s, end: e }); } return true; };
+  if (r.freq === "daily" || r.freq === "weekly") {
+    const days = r.freq === "weekly" ? (r.days && r.days.length ? r.days : [new Date(ev.start).getDay()]) : [0, 1, 2, 3, 4, 5, 6];
+    const w0 = weekStart(ev.start), d0 = dayStart(ev.start);
+    let d = r.count ? d0 : Math.max(d0, dayStart(from - dur));
+    for (let guard = 0; d < to && d <= until && guard < 5000; d = addDays(d, 1), guard++) {
+      if (!days.includes(new Date(d).getDay())) continue;
+      if (r.freq === "weekly" && interval > 1 && Math.round((weekStart(d) - w0) / (7 * D)) % interval) continue;
+      if (r.freq === "daily" && interval > 1 && Math.round((d - d0) / D) % interval) continue;
+      const s = atMin(d, baseMin); if (s < ev.start) continue;
+      if (!emit(s)) break;
+    }
+  } else if (r.freq === "monthly" || r.freq === "yearly") {
+    const base = new Date(ev.start);
+    for (let i = 0; i < 600; i++) {
+      const s = new Date(base); if (r.freq === "monthly") s.setMonth(base.getMonth() + i * interval); else s.setFullYear(base.getFullYear() + i * interval);
+      const t = s.getTime(); if (t >= to || t > until) break;
+      if (!emit(t)) break;
+    }
+  }
+  return out;
+}
+function dayItems(day) {
+  const from = day, to = addDays(day, 1), out = [];
+  for (const ev of S.cal.events) for (const o of occurrences(ev, from, to)) out.push({ kind: "ev", id: ev.id, title: ev.title, start: o.start, end: o.end, allDay: !!ev.allDay, cat: ev.cat || "other", location: ev.location || "", src: ev.source || "" });
+  for (const p of S.cal.plan) {
+    if (p.end <= from || p.start >= to || p.status === "skipped") continue;
+    const g = goalOf(p.goalId);
+    out.push({ kind: "plan", id: p.id, title: p.title || (g ? g.name : "Plan"), start: p.start, end: p.end, cat: p.cat || (g ? g.cat : "other"), status: p.status });
+  }
+  return out.sort((a, b) => (b.allDay - a.allDay) || a.start - b.start || b.end - a.end);
+}
+
+/* ---------- reading calendars: iCal text ---------- */
+function icsText(v) { return v.replace(/\\n/gi, "\n").replace(/\\([,;\\])/g, "$1").trim(); }
+function icsDate(v, P) {
+  const m = v.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/); if (!m) return { t: NaN, allDay: false };
+  if (!m[4] || P.VALUE === "DATE") return { t: new Date(+m[1], +m[2] - 1, +m[3]).getTime(), allDay: true };
+  if (m[7]) return { t: Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0)), allDay: false };
+  return { t: new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +(m[6] || 0)).getTime(), allDay: false };
+}
+function icsDuration(v) { const m = v.match(/P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/); if (!m) return 0; return (((+m[1] || 0) * 7 + (+m[2] || 0)) * 24 * 60 + (+m[3] || 0) * 60 + (+m[4] || 0)) * MIN + (+m[5] || 0) * 1000; }
+function icsRule(v) {
+  const o = Object.fromEntries(v.split(";").map(kv => kv.split("=")));
+  const map = { SU: 0, MO: 1, TU: 2, WE: 3, TH: 4, FR: 5, SA: 6 };
+  return { freq: (o.FREQ || "").toLowerCase(), interval: +o.INTERVAL || 1, count: +o.COUNT || 0, until: o.UNTIL ? icsDate(o.UNTIL, {}).t : 0, days: o.BYDAY ? o.BYDAY.split(",").map(x => map[x.slice(-2)]).filter(x => x != null) : null };
+}
+function parseICS(text) {
+  const lines = text.replace(/\r?\n[ \t]/g, "").split(/\r?\n/), out = [];
+  let ev = null;
+  for (const line of lines) {
+    if (line === "BEGIN:VEVENT") { ev = {}; continue; }
+    if (line === "END:VEVENT") { if (ev && ev.start && !isNaN(ev.start)) out.push(ev); ev = null; continue; }
+    if (!ev) continue;
+    const i = line.indexOf(":"); if (i < 0) continue;
+    const [name, ...params] = line.slice(0, i).split(";"), value = line.slice(i + 1);
+    const P = Object.fromEntries(params.map(p => p.split("=")));
+    if (name === "SUMMARY") ev.title = icsText(value);
+    else if (name === "LOCATION") ev.location = icsText(value);
+    else if (name === "DESCRIPTION") ev.notes = icsText(value).slice(0, 400);
+    else if (name === "DTSTART") { const d = icsDate(value, P); ev.start = d.t; ev.allDay = d.allDay; }
+    else if (name === "DTEND") ev.end = icsDate(value, P).t;
+    else if (name === "DURATION") ev.dur = icsDuration(value);
+    else if (name === "RRULE") ev.rrule = icsRule(value);
+    else if (name === "EXDATE") (ev.ex = ev.ex || []).push(...value.split(",").map(v => icsDate(v, P).t));
+    else if (name === "STATUS" && /CANCELLED/i.test(value)) ev.cancelled = true;
+  }
+  const keepAfter = Date.now() - 30 * D;
+  return out.filter(e => !e.cancelled).map(e => {
+    const end = e.end || (e.dur ? e.start + e.dur : e.start + (e.allDay ? D : H));
+    const rr = e.rrule && ["daily", "weekly", "monthly", "yearly"].includes(e.rrule.freq) ? e.rrule : null;
+    return { title: e.title || "Untitled", start: e.start, end, allDay: !!e.allDay, location: e.location || "", notes: e.notes || "", rrule: rr, ex: e.ex, cat: guessCat(`${e.title} ${e.location}`) };
+  }).filter(e => e.rrule ? !(e.rrule.until && e.rrule.until < keepAfter) : e.end > keepAfter);
+}
+
+/* ---------- reading pasted timetables (English or Dutch, lines or copied tables) ---------- */
+const TIME_RE = /(\d{1,2})(?:[:.hu](\d{2}))?\s*(am|pm)?/i;
+function toMin(h, m, ap) { h = +h; m = +(m || 0); if (ap) { ap = ap.toLowerCase(); if (ap === "pm" && h < 12) h += 12; if (ap === "am" && h === 12) h = 0; } return h * 60 + m; }
+const RANGE_RE = /(\d{1,2})(?:([:.hu])(\d{2})?)?\s*(am|pm)?\s*(?:-|–|—|to|tot|until|t\/m)\s*(\d{1,2})(?:([:.hu])(\d{2})?)?\s*(am|pm)?/i;
+function matchRange(s) { const m = s.match(RANGE_RE); if (!m || !(m[2] || m[6] || m[4] || m[8])) return null; return { text: m[0], s: toMin(m[1], m[3], m[4] || m[8]), e: toMin(m[5], m[7], m[8] || m[4]) }; }
+const SINGLE_RE = /\b(\d{1,2})[:.u](\d{2})\b|\b(\d{1,2})\s*(am|pm)\b/i;
+function findDate(s, ref) {
+  let m = s.match(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/); if (m) return { t: new Date(+m[1], +m[2] - 1, +m[3]).getTime(), text: m[0] };
+  m = s.match(/\b(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{2,4}))?\b/);
+  if (m && +m[2] <= 12 && +m[1] <= 31 && !/[:u]/.test(s.slice(m.index + m[0].length, m.index + m[0].length + 1))) {
+    let y = m[3] ? +m[3] : new Date(ref).getFullYear(); if (y < 100) y += 2000;
+    let t = new Date(y, +m[2] - 1, +m[1]).getTime(); if (!m[3] && t < dayStart(ref) - 60 * D) t = new Date(y + 1, +m[2] - 1, +m[1]).getTime();
+    return { t, text: m[0] };
+  }
+  m = s.match(/\b(\d{1,2})\s+(jan(?:uari|uary)?|feb(?:ruari|ruary)?|maart|mrt|march|mar|apr(?:il)?|mei|may|jun[ei]?|jul[iy]?|aug(?:ustus|ust)?|sept?(?:ember)?|o[ck]t(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b/i);
+  if (m) { const mo = MONTHS[m[2].toLowerCase()] ?? MONTHS[m[2].toLowerCase().slice(0, 3)]; let t = new Date(new Date(ref).getFullYear(), mo, +m[1]).getTime(); if (t < dayStart(ref) - 60 * D) t = addDays(t, 365); return { t, text: m[0] }; }
+  return null;
+}
+function nextWeekday(wd, ref) { const d = dayStart(ref); return addDays(d, (wd - new Date(d).getDay() + 7) % 7); }
+function cleanTitle(s) { return s.replace(/\s+/g, " ").replace(/^[\s|:,\-–—.]+|[\s|:,\-–—.]+$/g, "").replace(/^\d{1,2}(e|de|ste)?\s*(uur|lesuur|period|les)\b\.?\s*/i, "").trim(); }
+function parsePaste(text, ref = Date.now()) {
+  if (/BEGIN:VEVENT/.test(text)) return { kind: "ics", events: parseICS(text) };
+  const rows = text.replace(/\r/g, "").split("\n").filter(l => l.trim());
+  const events = [], thisWeek = weekStart(ref);
+  // copied table: a header row with several day names
+  const head = rows.findIndex(r => r.split(/\t|\s{2,}|\|/).filter(c => WD_LONG_RE.test(c) || /^\s*(mon|tue|wed|thu|fri|ma|di|wo|do|vr)\.?\s*$/i.test(c)).length >= 3);
+  if (head >= 0) {
+    const cols = rows[head].split(/\t|\||\s{2,}/).map(c => { const m = c.trim().toLowerCase().replace(/\.$/, ""); return WD[m] ?? (WD_LONG_RE.test(m) ? WD[m.match(WD_LONG_RE)[1].toLowerCase()] : null); });
+    for (const r of rows.slice(head + 1)) {
+      const cells = r.split(/\t|\|/); const rg = matchRange(r); if (!rg) continue;
+      const s = rg.s, e = rg.e;
+      cells.forEach((cell, i) => {
+        const wd = cols[i]; const title = cleanTitle(cell.replace(rg.text, ""));
+        if (wd == null || !title) return;
+        const day = addDays(thisWeek, (wd + 6) % 7);
+        events.push({ title, start: atMin(day, s), end: atMin(day, e > s ? e : s + 50), cat: guessCat(title) === "other" ? "school" : guessCat(title), rrule: { freq: "weekly", days: [wd] } });
+      });
+    }
+    return { kind: "table", events };
+  }
+  // line by line, remembering the last day name or date that was mentioned
+  let curWd = null, curDate = null;
+  for (const raw of rows) {
+    let line = raw.trim(); const low = line.toLowerCase();
+    const date = findDate(line, ref);
+    const wdm = line.match(WD_LONG_RE) || (/^\s*(ma|di|wo|do|vr|za|zo|mon|tue|wed|thu|fri|sat|sun)\b\.?/i.test(line) ? line.match(/^\s*(ma|di|wo|do|vr|za|zo|mon|tue|wed|thu|fri|sat|sun)\b/i) : null);
+    if (date) { curDate = date.t; curWd = null; line = line.replace(date.text, " "); }
+    else if (wdm) { curWd = WD[wdm[1].toLowerCase()]; curDate = null; line = line.replace(wdm[0], " "); }
+    const rg = matchRange(line), sg = !rg && line.match(SINGLE_RE);
+    if (!rg && !sg) continue;
+    let s, e;
+    if (rg) { s = rg.s; e = rg.e; line = line.replace(rg.text, " "); }
+    else { s = sg[1] != null ? toMin(sg[1], sg[2]) : toMin(sg[3], 0, sg[4]); e = s + 50; line = line.replace(sg[0], " "); }
+    if (!(e > s)) e = s + 50;
+    let location = ""; const loc = line.match(/\(([^)]+)\)|\b(?:lokaal|room|zaal)\s+([\w.-]+)/i); if (loc) { location = (loc[1] || loc[0]).trim(); line = line.replace(loc[0], " "); }
+    const title = cleanTitle(line) || "Lesson";
+    const cat = guessCat(`${title} ${low}`);
+    if (curDate != null) events.push({ title, start: atMin(curDate, s), end: atMin(curDate, e), location, cat: cat === "other" ? "other" : cat });
+    else if (curWd != null) { const day = addDays(thisWeek, (curWd + 6) % 7); events.push({ title, start: atMin(day, s), end: atMin(day, e), location, cat: cat === "other" ? "school" : cat, rrule: { freq: "weekly", days: [curWd] } }); }
+  }
+  return { kind: events.some(e => e.rrule) ? "timetable" : "list", events };
+}
+
+/* ---------- quick add: "gaming 2h tonight", "voetbal elke woensdag 18u-19u30" ---------- */
+function quickParse(text, ref = Date.now()) {
+  let work = " " + text + " "; const low0 = text.toLowerCase();
+  const take = m => { if (m) work = work.replace(new RegExp(escRe(m[0]), "i"), " "); return m; };
+  const r = { title: "", cat: guessCat(low0), dur: null, day: null, startMin: null, endMin: null, weekly: null, evening: false, valid: !!text.trim() };
+  let m;
+  const rg = matchRange(work);
+  if (rg) { take([rg.text]); r.startMin = rg.s; r.endMin = rg.e; }
+  else if ((m = take(work.match(/\b(?:at|om|@)\s*(\d{1,2})(?:[:.hu](\d{2})?)?\s*(am|pm)?(?!\s*(?:hours?|uur|min))/i)))) r.startMin = toMin(m[1], m[2], m[3] || (+m[1] <= 7 ? "pm" : null));
+  else if ((m = take(work.match(/\b(\d{1,2})[:.](\d{2})\b|\b(\d{1,2})u(\d{2})\b/i)))) r.startMin = m[1] != null ? toMin(m[1], m[2]) : toMin(m[3], m[4]);
+  else if ((m = take(work.match(/\b(\d{1,2})\s*(am|pm)\b/i)))) r.startMin = toMin(m[1], 0, m[2]);
+  else if ((m = work.match(/\b(\d{1,2})u\b(?!\s*\d)/i)) && +m[1] > 4) { take(m); r.startMin = toMin(m[1], 0); }
+  if ((m = take(work.match(/\b(\d+(?:[.,]\d+)?)\s*(?:h|u|uur|hours?|hrs?)\s*(\d{1,2})?\s*(?:m|min|minuten|minutes)?\b/i)))) r.dur = Math.round(parseFloat(m[1].replace(",", ".")) * 60 + (+m[2] || 0));
+  else if ((m = take(work.match(/\b(\d{1,3})\s*(?:m|min|mins|minutes|minuten)\b/i)))) r.dur = +m[1];
+  if ((m = take(work.match(/\b(?:every|elke|iedere)\s+(day|dag|weekday|weekdag|monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/i)))) {
+    const w = m[1].toLowerCase(); r.weekly = /^(day|dag)$/.test(w) ? [0, 1, 2, 3, 4, 5, 6] : /^week/.test(w) ? [1, 2, 3, 4, 5] : [WD[w]];
+  }
+  const today = dayStart(ref);
+  if ((m = take(work.match(/\b(tonight|vanavond)\b/i)))) { r.day = today; r.evening = true; }
+  else if ((m = take(work.match(/\b(today|vandaag)\b/i)))) r.day = today;
+  else if ((m = take(work.match(/\b(day after tomorrow|overmorgen)\b/i)))) r.day = addDays(today, 2);
+  else if ((m = take(work.match(/\b(tomorrow|morgen)\b/i)))) r.day = addDays(today, 1);
+  else if ((m = take(work.match(/\b(?:(next|volgende)\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/i)))) {
+    r.day = nextWeekday(WD[m[2].toLowerCase()], ref); if (m[1] && r.day - today < 7 * D && r.day !== today) r.day = addDays(r.day, 7);
+  } else { const dt = findDate(work, ref); if (dt) { take([dt.text]); r.day = dt.t; } }
+  if (r.weekly && r.day == null) r.day = nextWeekday(r.weekly[0], ref);
+  work = work.replace(/\b(for|voor|at|om|on|op|in the|de|het|een|a|an)\b/gi, " ");
+  const t = cleanTitle(work);
+  r.title = t ? t[0].toUpperCase() + t.slice(1) : catOf(r.cat).name;
+  if (r.startMin != null && r.endMin != null && r.endMin <= r.startMin) r.endMin = r.startMin + 60;
+  return r;
+}
+function describeQuick(q) {
+  if (!q || !q.valid) return "";
+  const dayTxt = q.weekly ? (q.weekly.length === 7 ? "every day" : q.weekly.length === 5 ? "every weekday" : `every ${dayName(nextWeekday(q.weekly[0], Date.now()), "long")}`) : q.day != null ? dayTitle(q.day) : "";
+  const timeTxt = q.startMin != null ? `${pad2(Math.floor(q.startMin / 60))}:${pad2(q.startMin % 60)}${q.endMin != null || q.dur ? "–" + (() => { const e = q.endMin ?? q.startMin + (q.dur || 60); return `${pad2(Math.floor(e / 60) % 24)}:${pad2(e % 60)}`; })() : ""}` : q.evening ? "tonight, at a free time" : "at the best free time";
+  return `${catOf(q.cat).name}: <b>${esc(q.title)}</b>, ${esc([dayTxt, timeTxt].filter(Boolean).join(", "))}${q.startMin == null ? ` <em>(VEX picks the time)</em>` : ""}${q.dur && q.startMin == null ? `, ${fmtDur(q.dur)}` : ""}`;
+}
+function quickAdd(text) {
+  const q = quickParse(text); if (!q.valid) return;
+  if (q.startMin != null) {
+    const day = q.day ?? (atMin(dayStart(Date.now()), q.startMin) < Date.now() ? addDays(dayStart(Date.now()), 1) : dayStart(Date.now()));
+    const start = atMin(day, q.startMin), end = q.endMin != null ? atMin(day, q.endMin) : start + (q.dur || 60) * MIN;
+    const ev = { id: uid("e"), title: q.title, start, end, cat: q.cat, source: "manual", rrule: q.weekly ? { freq: "weekly", days: q.weekly } : null };
+    S.cal.events.push(ev); CAL.day = dayStart(start);
+    afterCalChange(); toast(`Added ${q.title}, ${dayWord(dayStart(start))} ${hm(start)}`, () => { S.cal.events = S.cal.events.filter(e => e.id !== ev.id); afterCalChange(); });
+    return;
+  }
+  const day = q.day ?? dayStart(Date.now()), mins = q.dur || 60;
+  const g = { id: "tmp", cat: q.cat, minutes: mins, when: q.evening ? "evening" : "any" };
+  const busy = new Map([[day, busyFor(day)]]);
+  const best = bestSlot({ g, from: day, to: addDays(day, 1) }, [day], busy, new Map(), new Map(), Date.now());
+  if (!best) { toast(`No free ${fmtDur(mins)} ${dayWord(day)}. Try another day.`); return; }
+  const item = { id: uid("p"), title: q.title, cat: q.cat, start: best.start, end: best.end, status: "locked" };
+  S.cal.plan.push(item); CAL.day = day;
+  afterCalChange(); toast(`${q.title} planned ${dayWord(day)} at ${hm(best.start)}`, () => { S.cal.plan = S.cal.plan.filter(p => p.id !== item.id); afterCalChange(); });
+}
+
+/* ---------- the planner ---------- */
+function busyFor(day) {
+  const from = day, to = addDays(day, 1), out = [];
+  for (const ev of S.cal.events) if (!ev.allDay) for (const o of occurrences(ev, from, to)) out.push([o.start, o.end]);
+  for (const p of S.cal.plan) if (p.status !== "skipped" && p.status !== "missed" && p.end > from && p.start < to) out.push([p.start, p.end]);
+  return out.sort((a, b) => a[0] - b[0]);
+}
+function freeSlots(day, busy, notBefore) {
+  const st = S.cal.settings, gap = st.gap * MIN, end = atMin(day, st.sleep);
+  let cur = Math.max(atMin(day, st.wake), notBefore || 0); cur = Math.ceil(cur / (15 * MIN)) * 15 * MIN;
+  const slots = [];
+  const q = 15 * MIN, up = t => Math.ceil(t / q) * q;
+  for (const [bs, be] of busy) { if (be + gap <= cur) continue; if (bs - gap > cur) slots.push([cur, Math.min(bs - gap, end)]); cur = up(Math.max(cur, be + gap)); if (cur >= end) break; }
+  if (cur < end) slots.push([cur, end]);
+  return slots.filter(([a, b]) => b - a >= 15 * MIN);
+}
+const isDutyCat = c => c === "study" || c === "chores" || c === "school";
+function catMinutesOn(day, cat) {
+  return S.cal.plan.filter(p => p.status !== "skipped" && p.status !== "missed" && dayStart(p.start) === day && (p.cat || (goalOf(p.goalId) || {}).cat) === cat).reduce((s, p) => s + (p.end - p.start) / MIN, 0);
+}
+function dutyBefore(day, t) { return S.cal.plan.some(p => p.status !== "skipped" && p.status !== "missed" && dayStart(p.start) === day && p.end <= t && isDutyCat(p.cat || (goalOf(p.goalId) || {}).cat)); }
+function scoreSlot(g, r, d, s, len, load, placedOn, firstDay) {
+  const m = minsOf(s), mEnd = m + len / MIN, wd = new Date(d).getDay(), weekend = wd === 0 || wd === 6, schoolNight = wd <= 4;
+  let sc = 100;
+  const win = { morning: [360, 720], afternoon: [720, 1080], evening: [1080, 1440] }[g.when];
+  if (win) sc += m >= win[0] && mEnd <= win[1] + 1 ? 30 : -30;
+  sc -= (load.get(d) || 0) * 0.08;
+  for (const pd of placedOn.get(g.id) || []) { const gap = Math.abs(pd - d) / D; if (gap < 0.5) sc -= 35; else if (gap < 1.5) sc -= 8; }
+  if (g.cat === "gaming") { if (!weekend && m >= 1020 && mEnd <= 1290) sc += 12; if (weekend) sc += 8; if (schoolNight && mEnd > 1320) sc -= 30; if (dutyBefore(d, s)) sc += 14; }
+  if (g.cat === "study") { if (m >= 900 && mEnd <= 1170) sc += 12; if (mEnd > 1260) sc -= 25; }
+  if (g.cat === "sport") { if (mEnd > 1290) sc -= 20; if (m >= 960 && mEnd <= 1230) sc += 12; }
+  if (m < 540) sc -= weekend ? 30 : 20;
+  if (g.cat === "chill" && m >= 1140) sc += 8;
+  if (r.before != null) { const left = (r.before - d) / D; sc += Math.min(20, left * 2); }
+  if (m % 60 === 0) sc += 3; else if (m % 30 === 0) sc += 1.5;
+  sc -= ((d - firstDay) / D) * 1.2;
+  return sc;
+}
+function bestSlot(r, days, busy, load, placedOn, now) {
+  const g = r.g, len = g.minutes * MIN, st = S.cal.settings;
+  let best = null;
+  for (const d of days) {
+    if (r.before != null && d >= r.before) break;
+    if (r.from != null && (d < dayStart(r.from) || d >= r.to)) continue;
+    if (g.days && g.days.length && !g.days.includes(new Date(d).getDay())) continue;
+    if (g.cat === "gaming" && st.gameMax && catMinutesOn(d, "gaming") + g.minutes > st.gameMax) continue;
+    if ((placedOn.get(g.id) || []).filter(x => x === d).length >= (r.before != null ? 2 : 1)) continue;
+    if (!busy.has(d)) busy.set(d, busyFor(d));
+    for (const [a, b] of freeSlots(d, busy.get(d), now + 15 * MIN)) {
+      for (let s = a; s + len <= b; s += 15 * MIN) {
+        const sc = scoreSlot(g, r, d, s, len, load, placedOn, days[0]);
+        if (!best || sc > best.score) best = { start: s, end: s + len, score: sc };
+      }
+    }
+  }
+  return best;
+}
+function planWeek() {
+  const now = Date.now(), today = dayStart(now), ws = weekStart(today);
+  S.cal.plan.forEach(p => { if (p.status === "planned" && p.end < now) p.status = "missed"; });
+  S.cal.plan = S.cal.plan.filter(p => !(p.status === "planned" && p.start >= now));
+  const days = []; for (let d = today; d < addDays(ws, 14); d = addDays(d, 1)) days.push(d);
+  const busy = new Map(), load = new Map(), placedOn = new Map();
+  const counts = p => p.status === "done" || p.status === "locked" || p.status === "planned";
+  for (const p of S.cal.plan) { if (!counts(p)) continue; const d = dayStart(p.start); load.set(d, (load.get(d) || 0) + (p.end - p.start) / MIN); if (p.goalId) (placedOn.get(p.goalId) || placedOn.set(p.goalId, []).get(p.goalId)).push(d); }
+  const reqs = [];
+  for (const g of S.cal.goals) {
+    if (g.deadline) {
+      if (g.deadline < now) continue;
+      const doneMin = S.cal.plan.filter(p => p.goalId === g.id && counts(p)).reduce((s, p) => s + (p.end - p.start) / MIN, 0);
+      const n = Math.ceil(Math.max(0, (g.totalMinutes || g.minutes) - doneMin) / g.minutes);
+      for (let i = 0; i < n; i++) reqs.push({ g, before: dayStart(g.deadline) });
+    } else {
+      for (const w of [ws, addDays(ws, 7)]) {
+        const have = S.cal.plan.filter(p => p.goalId === g.id && counts(p) && p.start >= w && p.start < addDays(w, 7)).length;
+        for (let i = have; i < (g.perWeek || 0); i++) reqs.push({ g, from: Math.max(w, today), to: addDays(w, 7) });
+      }
+    }
+  }
+  reqs.sort((a, b) => ((b.before != null) - (a.before != null)) || ((a.before || 0) - (b.before || 0)) || ((b.g.priority || 2) - (a.g.priority || 2)) || (isDutyCat(b.g.cat) - isDutyCat(a.g.cat)) || ((a.from || 0) - (b.from || 0)));
+  const missing = new Map(); let placed = 0;
+  for (const r of reqs) {
+    const best = bestSlot(r, days, busy, load, placedOn, now);
+    if (!best) { missing.set(r.g.id, (missing.get(r.g.id) || 0) + 1); continue; }
+    const d = dayStart(best.start);
+    S.cal.plan.push({ id: uid("p"), goalId: r.g.id, start: best.start, end: best.end, status: "planned" });
+    busy.get(d).push([best.start, best.end]); busy.get(d).sort((a, b) => a[0] - b[0]);
+    load.set(d, (load.get(d) || 0) + r.g.minutes);
+    (placedOn.get(r.g.id) || placedOn.set(r.g.id, []).get(r.g.id)).push(d);
+    placed++;
+  }
+  S.cal.plan = S.cal.plan.filter(p => p.end > now - 35 * D);
+  S.cal.lastPlan = now;
+  S.cal.report = { at: now, placed, missing: [...missing].map(([id, n]) => ({ id, n })) };
+  return S.cal.report;
+}
+let planTimer = null;
+function afterCalChange(noPlan) { if (!noPlan && S.cal.goals.length) planWeek(); save(); render(); }
+function autoPlanIfStale() { if (S.cal.goals.length && dayStart(S.cal.lastPlan || 0) !== dayStart(Date.now())) planWeek(); }
+
+/* ---------- calendar subscriptions (iCal links) ---------- */
+async function fetchText(url) {
+  url = url.trim().replace(/^webcals?:\/\//i, "https://");
+  if (NATIVE && typeof NATIVE.httpGet === "function") { const r = await native("httpGet", { url }); return r.ok ? r.text : Promise.reject(new Error(r.message || "failed")); }
+  const res = await fetch(url); if (!res.ok) throw new Error("status " + res.status); return res.text();
+}
+async function refreshSub(sub, quiet) {
+  try {
+    const events = parseICS(await fetchText(sub.url));
+    S.cal.events = S.cal.events.filter(e => e.source !== "sub:" + sub.id).concat(events.map(e => ({ ...e, id: uid("e"), source: "sub:" + sub.id })));
+    sub.lastSync = Date.now(); sub.count = events.length; sub.error = "";
+    if (!quiet) toast(`${sub.name}: ${plural(events.length, "event")} loaded`);
+    return true;
+  } catch (e) { sub.error = "Couldn’t load it"; if (!quiet) toast("Couldn’t load that calendar link. Check the link, or paste the calendar instead."); return false; }
+}
+async function refreshSubsIfStale() {
+  const stale = S.cal.subs.filter(s => Date.now() - (s.lastSync || 0) > 6 * H);
+  if (!stale.length) return;
+  for (const s of stale) await refreshSub(s, true);
+  afterCalChange();
+}
+
+/* ---------- views ---------- */
+function calSummary() {
+  const today = dayStart(Date.now()), items = dayItems(today).filter(i => !i.allDay && i.end > Date.now());
+  const free = freeSlots(today, busyFor(today), Date.now()).reduce((s, [a, b]) => s + (b - a), 0) / MIN;
+  return `${items.length ? plural(items.length, "thing") + " left today" : "Nothing left today"}, ${fmtDur(free)} free`;
+}
+function weekStrip() {
+  const ws = weekStart(CAL.day), today = dayStart(Date.now());
+  let h = `<div class="wk"><button class="tbtn" type="button" data-cal="week:-1" aria-label="Previous week">${icon("back")}</button><div class="wk-days">`;
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(ws, i), n = dayItems(d).length;
+    h += `<button type="button" class="wk-d${d === CAL.day ? " on" : ""}${d === today ? " today" : ""}" data-cal="day:${d}"><small>${esc(dayName(d))}</small><b>${new Date(d).getDate()}</b><i>${"<em></em>".repeat(Math.min(3, n))}</i></button>`;
+  }
+  return h + `</div><button class="tbtn" type="button" data-cal="week:1" aria-label="Next week">${icon("fwd")}</button></div>`;
+}
+function insightCard() {
+  const d = CAL.day, now = Date.now(), isToday = d === dayStart(now);
+  const timed = dayItems(d).filter(i => !i.allDay);
+  const slots = freeSlots(d, busyFor(d), isToday ? now : 0), free = slots.reduce((s, [a, b]) => s + (b - a), 0) / MIN;
+  const longest = slots.reduce((b, s) => !b || s[1] - s[0] > b[1] - b[0] ? s : b, null);
+  const nowItem = isToday && timed.find(i => i.start <= now && i.end > now), next = isToday ? timed.find(i => i.start > now) : timed[0];
+  const lines = [];
+  if (nowItem) lines.push(`<b>Up now:</b> ${esc(nowItem.title)} until ${hm(nowItem.end)}`);
+  if (next) lines.push(`<b>${isToday ? "Next" : "First"}:</b> ${esc(next.title)} at ${hm(next.start)}`);
+  lines.push(`<b>Free:</b> ${fmtDur(free)}${longest ? `, longest stretch ${hm(longest[0])}–${hm(longest[1])}` : ""}`);
+  let tip = "";
+  const gaming = S.cal.goals.find(g => g.cat === "gaming");
+  if (isToday && longest && (longest[1] - longest[0]) / MIN >= 60 && !timed.some(i => i.cat === "gaming") && minsOf(longest[1]) > 17 * 60)
+    tip = `<button class="btn sm" type="button" data-cal="tip:gaming">${icon("game")}${gaming ? "Fit gaming in tonight" : "Free tonight: plan some gaming"}</button>`;
+  else if (isToday && S.cal.goals.some(g => g.deadline && g.deadline > now)) tip = `<span class="hint">Deadline coming up. VEX keeps study time in your plan.</span>`;
+  return `<div class="insight">${lines.map(l => `<p>${l}</p>`).join("")}${tip}</div>`;
+}
+function layoutColumns(items) {
+  const cols = []; let groupEnd = 0, group = [];
+  const flush = () => { const n = Math.max(1, ...group.map(g => g.col + 1)); group.forEach(g => g.cols = n); group = []; };
+  for (const it of items) {
+    if (it.start >= groupEnd && group.length) { flush(); cols.length = 0; }
+    let c = cols.findIndex(end => end <= it.start); if (c < 0) { c = cols.length; cols.push(0); }
+    cols[c] = it.end; it.col = c; group.push(it); groupEnd = Math.max(groupEnd, it.end);
+  }
+  if (group.length) flush();
+  return items;
+}
+function timeline(day) {
+  const items = dayItems(day), allDay = items.filter(i => i.allDay), timed = layoutColumns(items.filter(i => !i.allDay));
+  const st = S.cal.settings, HP = 56;
+  const h0 = Math.max(0, Math.min(Math.floor(st.wake / 60) - 1, ...timed.map(i => new Date(Math.max(i.start, day)).getHours())));
+  const top = t => (Math.max(t, day) - atMin(day, h0 * 60)) / H * HP;
+  let h = allDay.length ? `<div class="allday">${allDay.map(i => `<button type="button" class="adc" style="--c:${catOf(i.cat).color}" data-cal="${i.kind}:${i.id}">${esc(i.title)}</button>`).join("")}</div>` : "";
+  h += `<div class="tl" data-cal="tl" data-day="${day}" data-h0="${h0}" style="height:${(24 - h0) * HP}px">`;
+  for (let x = h0; x < 24; x++) h += `<div class="tl-h" style="top:${(x - h0) * HP}px"><span>${pad2(x)}:00</span></div>`;
+  for (const i of timed) {
+    const y = top(i.start), ht = Math.max(24, top(Math.min(i.end, addDays(day, 1))) - y - 2), c = catOf(i.cat);
+    const cls = i.kind === "plan" ? ` plan ${i.status}` : "";
+    h += `<button type="button" class="ev${cls}" data-cal="${i.kind}:${i.id}" style="top:${y}px;height:${ht}px;left:calc(54px + (100% - 58px) * ${i.col / i.cols});width:calc((100% - 58px) / ${i.cols} - 3px);--c:${c.color}">
+      <b>${i.kind === "plan" ? icon(i.status === "done" ? "check" : c.icon) : ""}${esc(i.title)}</b><small>${hm(i.start)}–${hm(i.end)}${i.location ? " · " + esc(i.location) : ""}</small></button>`;
+  }
+  if (day === dayStart(Date.now())) h += `<div class="tl-now" style="top:${top(Date.now())}px"></div>`;
+  return h + `</div>`;
+}
+function agenda() {
+  const today = dayStart(Date.now()); let h = "", any = false;
+  for (let i = 0; i < 14; i++) {
+    const d = addDays(today, i), items = dayItems(d).filter(it => it.kind === "ev" || it.status !== "missed");
+    if (!items.length) continue; any = true;
+    h += `<div class="day">${esc(dayTitle(d))}</div><div class="group">` + items.map(it => `<button type="button" class="ag" data-cal="${it.kind}:${it.id}" style="--c:${catOf(it.cat).color}">
+      <span class="ag-t">${it.allDay ? "All day" : hm(it.start)}</span><span class="ag-b"><b>${esc(it.title)}</b><small>${it.allDay ? "" : hm(it.start) + "–" + hm(it.end)}${it.location ? " · " + esc(it.location) : ""}${it.kind === "plan" ? ` · ${it.status === "done" ? "done" : "planned by VEX"}` : ""}</small></span></button>`).join("") + `</div>`;
+  }
+  return any ? h : `<div class="zero"><img class="art" src="${$("#emptyArt").src}" alt=""><h2>Nothing coming up</h2><p>Import your timetable or add something above.</p></div>`;
+}
+function planView() {
+  const ws = weekStart(Date.now()), we = addDays(ws, 7), st = S.cal.settings, now = Date.now();
+  let h = `<div class="set-h">Things you want to do</div>`;
+  if (!S.cal.goals.length) h += `<div class="insight"><p>Tell VEX what you want to fit in, like gaming 5 times a week, sport twice a week, or 4 hours of studying before an exam. VEX plans it around your calendar and replans when things change.</p></div>`;
+  else h += `<div class="group">` + S.cal.goals.map(g => {
+    const c = catOf(g.cat), mine = S.cal.plan.filter(p => p.goalId === g.id);
+    let desc, pct;
+    if (g.deadline) { const done = mine.filter(p => p.status === "done").reduce((s, p) => s + (p.end - p.start) / MIN, 0); pct = Math.min(100, done / (g.totalMinutes || g.minutes) * 100); desc = `${fmtDur(done)} of ${fmtDur(g.totalMinutes || g.minutes)} done, due ${dayWord(dayStart(g.deadline))}`; }
+    else { const done = mine.filter(p => p.status === "done" && p.start >= ws && p.start < we).length; pct = Math.min(100, done / Math.max(1, g.perWeek) * 100); desc = `${done} of ${g.perWeek} this week, ${fmtDur(g.minutes)} each`; }
+    const next = mine.filter(p => p.start > now && (p.status === "planned" || p.status === "locked")).sort((a, b) => a.start - b.start)[0];
+    return `<button type="button" class="goal" data-cal="goal:${g.id}" style="--c:${c.color}"><span class="g-ic">${icon(c.icon)}</span><span class="g-tx"><b>${esc(g.name)}</b><small>${esc(desc)}${next ? `. Next: ${esc(dayWord(dayStart(next.start)))} ${hm(next.start)}` : ""}</small><span class="bar"><i style="width:${pct}%"></i></span></span></button>`;
+  }).join("") + `</div>`;
+  h += `<div class="actions" style="margin:12px 0"><button class="btn pri" type="button" data-cal="goal:new">${icon("plus")}Add something</button>${S.cal.goals.length ? `<button class="btn" type="button" data-cal="replan">${icon("wand")}Plan my week again</button>` : ""}</div>`;
+  const rep = S.cal.report;
+  if (rep && S.cal.goals.length) h += `<p class="hint">${rep.placed ? `VEX planned ${plural(rep.placed, "session")} for you.` : "Your plan is up to date."}${rep.missing.length ? ` Didn’t fit: ${rep.missing.map(m => `${esc((goalOf(m.id) || {}).name || "?")} (${m.n})`).join(", ")}. Free up time or shorten the sessions.` : ""}</p>`;
+  const opts = (key, list) => `<select class="field mini-sel" data-calset="${key}">${list.map(([v, l]) => `<option value="${v}"${String(st[key]) === String(v) ? " selected" : ""}>${l}</option>`).join("")}</select>`;
+  const times = (from, to) => { const o = []; for (let m = from; m <= to; m += 30) o.push([m, `${pad2(Math.floor(m / 60) % 24)}:${pad2(m % 60)}`]); return o; };
+  h += `<div class="set-h">Planner rules</div><div class="set-group">
+    <div class="opt"><span>Wake up</span>${opts("wake", times(300, 660))}</div>
+    <div class="opt"><span>Bedtime</span>${opts("sleep", times(1200, 1440 - 30).concat([[1439, "Midnight"]]))}</div>
+    <div class="opt"><span>Gap between things</span>${opts("gap", [[0, "None"], [10, "10 min"], [15, "15 min"], [30, "30 min"]])}</div>
+    <div class="opt"><span>Gaming per day, at most</span>${opts("gameMax", [[60, "1 hour"], [120, "2 hours"], [180, "3 hours"], [240, "4 hours"], [0, "No limit"]])}</div></div>`;
+  h += `<div class="set-h">Your calendars</div><div class="set-group">`;
+  const sources = new Map(); S.cal.events.forEach(e => sources.set(e.source || "manual", (sources.get(e.source || "manual") || 0) + 1));
+  for (const s of S.cal.subs) h += `<div class="opt"><span>${icon("link")} ${esc(s.name)}<small class="sub-note">${s.error ? esc(s.error) : `${plural(s.count || 0, "event")}, stays up to date`}</small></span><button class="btn sm" type="button" data-cal="unsub:${s.id}">Remove</button></div>`;
+  for (const [src, n] of sources) if (src.startsWith("paste:")) h += `<div class="opt"><span>Pasted calendar<small class="sub-note">${plural(n, "event")}</small></span><button class="btn sm" type="button" data-cal="unpaste:${src}">Remove</button></div>`;
+  h += `<div class="opt"><span>Add your timetable or another calendar</span><button class="btn sm pri" type="button" data-cal="import">Import</button></div></div>`;
+  return h;
+}
+function renderCalendar() {
+  const prevQa = $("#qaInput"), qaVal = prevQa ? prevQa.value : "", qaFocus = prevQa && document.activeElement === prevQa;
+  autoPlanIfStale();
+  setTitle("Calendar", calSummary());
+  const v = CAL.view;
+  let h = `<div class="cal-top"><span class="seg">${[["day", "Day"], ["agenda", "Agenda"], ["plan", "Plan"]].map(([k, l]) => `<button type="button" data-cal="view:${k}" class="${v === k ? "on" : ""}">${l}</button>`).join("")}</span><span class="sp"></span><button class="btn sm" type="button" data-cal="import">${icon("link")}Import</button></div>
+    <div class="qa"><input class="field" id="qaInput" type="text" placeholder="Add something, like “gaming 2h tonight”" autocomplete="off" enterkeyhint="done" aria-label="Quick add"><button class="btn sm pri" type="button" data-cal="qa">Add</button></div>
+    <p class="qa-prev" id="qaPrev"></p>`;
+  if (v === "day") h += weekStrip() + (CAL.day !== dayStart(Date.now()) ? `<div class="day-head"><b>${esc(dayTitle(CAL.day))}</b><button class="btn sm" type="button" data-cal="today">Today</button></div>` : "") + insightCard() + timeline(CAL.day);
+  else if (v === "agenda") h += agenda();
+  else h += planView();
+  $("#listBody").innerHTML = h;
+  const qa = $("#qaInput"); qa.value = qaVal; if (qaFocus) { qa.focus(); qa.setSelectionRange(qaVal.length, qaVal.length); }
+  paintQuickPreview();
+  if (v === "day" && !CAL.scrolled) {
+    CAL.scrolled = true;
+    const tl = $(".tl"); if (tl) { const target = CAL.day === dayStart(Date.now()) ? Date.now() - 90 * MIN : atMin(CAL.day, S.cal.settings.wake); const y = tl.offsetTop + (target - atMin(CAL.day, +tl.dataset.h0 * 60)) / H * 56 - 40; $("#scroller").scrollTop = Math.max(0, y); }
+  }
+}
+function paintQuickPreview() { const qa = $("#qaInput"), p = $("#qaPrev"); if (!qa || !p) return; p.innerHTML = qa.value.trim() ? describeQuick(quickParse(qa.value)) : ""; }
+
+/* ---------- sheets: event, planned block, goal, import ---------- */
+function catChips(sel, attr) { return Object.entries(CATS).map(([k, c]) => `<button type="button" class="cchip${k === sel ? " on" : ""}" data-${attr}="${k}" style="--c:${c.color}">${icon(c.icon)}${c.name}</button>`).join(""); }
+function openEvent(id, startAt) {
+  const ev = id ? S.cal.events.find(e => e.id === id) : null;
+  const start = ev ? ev.start : startAt || Math.ceil((Date.now() + 30 * MIN) / (30 * MIN)) * 30 * MIN, end = ev ? ev.end : start + H;
+  CAL.editing = { id: ev ? ev.id : null, cat: ev ? ev.cat || "other" : "other" };
+  $("#evTitle").textContent = ev ? "Edit event" : "New event";
+  $("#evName").value = ev ? ev.title : ""; $("#evDate").value = toDateInput(start); $("#evStart").value = toTimeInput(start); $("#evEnd").value = toTimeInput(end);
+  $("#evAllDay").checked = !!(ev && ev.allDay); $("#evWeekly").checked = !!(ev && ev.rrule && ev.rrule.freq === "weekly"); $("#evLoc").value = ev ? ev.location || "" : "";
+  $("#evCats").innerHTML = catChips(CAL.editing.cat, "evcat");
+  $("#evDelete").hidden = !ev; $("#evSrc").textContent = ev && ev.source && ev.source.startsWith("sub:") ? "This event comes from a calendar link. Changes here may be replaced when it updates." : "";
+  openSheet("#eventSheet"); if (!ev) setTimeout(() => $("#evName").focus(), 320);
+}
+$("#evCats").addEventListener("click", e => { const b = e.target.closest("[data-evcat]"); if (b) { CAL.editing.cat = b.dataset.evcat; $("#evCats").innerHTML = catChips(CAL.editing.cat, "evcat"); } });
+$("#evSave").addEventListener("click", () => {
+  const name = $("#evName").value.trim(); if (!name) { $("#evName").focus(); return; }
+  const allDay = $("#evAllDay").checked, d = $("#evDate").value; if (!d) return;
+  let start = allDay ? fromInputs(d, "00:00") : fromInputs(d, $("#evStart").value || "09:00"), end = allDay ? addDays(start, 1) : fromInputs(d, $("#evEnd").value || "10:00");
+  if (end <= start) end = start + H;
+  const data = { title: name, start, end, allDay, cat: CAL.editing.cat, location: $("#evLoc").value.trim(), rrule: $("#evWeekly").checked ? { freq: "weekly", days: [new Date(start).getDay()] } : null };
+  if (CAL.editing.id) Object.assign(S.cal.events.find(e => e.id === CAL.editing.id), data); else S.cal.events.push({ id: uid("e"), source: "manual", ...data });
+  CAL.day = dayStart(start); closeSheets(); afterCalChange(); toast(CAL.editing.id ? "Event saved" : "Event added");
+});
+$("#evDelete").addEventListener("click", () => {
+  const ev = S.cal.events.find(e => e.id === CAL.editing.id); if (!ev) return;
+  S.cal.events = S.cal.events.filter(e => e !== ev); closeSheets(); afterCalChange();
+  toast("Event deleted", () => { S.cal.events.push(ev); afterCalChange(); });
+});
+function openPlanItem(id) {
+  const p = S.cal.plan.find(x => x.id === id); if (!p) return;
+  const g = goalOf(p.goalId), c = catOf(p.cat || (g && g.cat));
+  CAL.editing = { plan: id };
+  $("#piTitle").textContent = p.title || (g ? g.name : "Planned");
+  $("#piInfo").innerHTML = `${icon(c.icon)} ${esc(c.name)}, ${esc(dayTitle(dayStart(p.start)))} ${hm(p.start)}–${hm(p.end)}<br><small>${p.status === "done" ? "Done. Nice." : p.status === "locked" ? "Locked in. VEX won’t move it." : p.status === "missed" ? "This one slipped by. VEX plans a new time for it." : "Planned by VEX. It moves if your calendar changes."}</small>`;
+  $("#piDone").hidden = p.status === "done"; $("#piLock").hidden = p.status !== "planned"; $("#piMove").hidden = !p.goalId || p.status === "done";
+  openSheet("#planSheet");
+}
+function planAction(kind) {
+  const p = S.cal.plan.find(x => x.id === CAL.editing.plan); if (!p) return; closeSheets();
+  if (kind === "done") { p.status = "done"; afterCalChange(true); toast("Done. Nice work."); }
+  else if (kind === "skip") { p.status = "skipped"; afterCalChange(); toast(p.goalId ? "Skipped. VEX planned a new time." : "Removed"); }
+  else if (kind === "lock") { p.status = "locked"; afterCalChange(true); toast("Locked in"); }
+  else if (kind === "move") { p.status = "skipped"; afterCalChange(); const n = S.cal.plan.filter(x => x.goalId === p.goalId && x.status === "planned" && x.start > Date.now()).sort((a, b) => a.start - b.start)[0]; toast(n ? `Moved to ${dayWord(dayStart(n.start))} ${hm(n.start)}` : "No other free time found"); }
+}
+["done", "skip", "lock", "move"].forEach(k => $("#pi" + k[0].toUpperCase() + k.slice(1)).addEventListener("click", () => planAction(k)));
+
+function openGoal(id) {
+  const g = id ? goalOf(id) : null;
+  CAL.goalEdit = g ? JSON.parse(JSON.stringify(g)) : { id: null, name: "", cat: "gaming", minutes: 60, perWeek: 3, when: "any", deadline: 0, totalMinutes: 240 };
+  paintGoal(); $("#goalDelete").hidden = !g; $("#goalTitle").textContent = g ? "Edit plan" : "Plan something";
+  openSheet("#goalSheet");
+}
+function paintGoal() {
+  const g = CAL.goalEdit;
+  $("#gName").value = g.name; $("#gCats").innerHTML = catChips(g.cat, "gcat");
+  const seg = (key, list) => list.map(([v, l]) => `<button type="button" data-g="${key}" data-v="${v}" class="${String(g[key]) === String(v) ? "on" : ""}">${l}</button>`).join("");
+  $("#gLen").innerHTML = seg("minutes", [[30, "30m"], [45, "45m"], [60, "1h"], [90, "1h30"], [120, "2h"], [180, "3h"]]);
+  $("#gWhen").innerHTML = seg("when", [["any", "Any time"], ["morning", "Morning"], ["afternoon", "Afternoon"], ["evening", "Evening"]]);
+  $("#gMode").innerHTML = seg("mode", [["week", "Every week"], ["deadline", "Before a deadline"]]);
+  const mode = g.deadline ? "deadline" : "week";
+  [...$("#gMode").children].forEach(b => b.classList.toggle("on", b.dataset.v === mode));
+  $("#gWeek").hidden = mode !== "week"; $("#gDead").hidden = mode !== "deadline";
+  $("#gTimes").textContent = `${g.perWeek} time${g.perWeek === 1 ? "" : "s"} a week`;
+  $("#gDate").value = g.deadline ? toDateInput(g.deadline) : toDateInput(addDays(Date.now(), 5));
+  $("#gTotal").innerHTML = seg("totalMinutes", [[60, "1h"], [120, "2h"], [240, "4h"], [360, "6h"], [600, "10h"]]);
+}
+$("#goalSheet").addEventListener("click", e => {
+  const g = CAL.goalEdit, b = e.target.closest("[data-g],[data-gcat],[data-step]"); if (!b) return;
+  g.name = $("#gName").value;
+  if (b.dataset.gcat) { g.cat = b.dataset.gcat; if (!g.name.trim()) $("#gName").value = g.name = ""; }
+  else if (b.dataset.step) g.perWeek = Math.max(1, Math.min(14, g.perWeek + +b.dataset.step));
+  else if (b.dataset.g === "mode") g.deadline = b.dataset.v === "deadline" ? (g.deadline || fromInputs($("#gDate").value, "17:00")) : 0;
+  else g[b.dataset.g] = isNaN(+b.dataset.v) ? b.dataset.v : +b.dataset.v;
+  paintGoal();
+});
+$("#gDate").addEventListener("change", () => { if (CAL.goalEdit.deadline) CAL.goalEdit.deadline = fromInputs($("#gDate").value, "17:00"); });
+$("#goalSave").addEventListener("click", () => {
+  const g = CAL.goalEdit; g.name = $("#gName").value.trim() || catOf(g.cat).name;
+  if (g.deadline) g.deadline = fromInputs($("#gDate").value, "17:00");
+  if (g.id) Object.assign(goalOf(g.id), g); else S.cal.goals.push({ ...g, id: uid("g") });
+  closeSheets(); CAL.view = "plan"; const rep = planWeek(); save(); render();
+  toast(rep.missing.length ? `Planned, but not everything fit. Check the Plan tab.` : `Planned. ${plural(rep.placed, "session")} added to your calendar.`);
+});
+$("#goalDelete").addEventListener("click", () => {
+  const id = CAL.goalEdit.id; S.cal.goals = S.cal.goals.filter(g => g.id !== id);
+  S.cal.plan = S.cal.plan.filter(p => !(p.goalId === id && p.status === "planned")); closeSheets(); afterCalChange(); toast("Removed from your plan");
+});
+
+function openImport() { CAL.imp = { mode: "paste", parsed: null }; $("#impText").value = ""; $("#impUrl").value = ""; $("#impPrev").innerHTML = ""; $("#impAdd").hidden = true; paintImport(); openSheet("#importSheet"); }
+function paintImport() {
+  const m = CAL.imp.mode;
+  $("#impMode").innerHTML = [["paste", "Paste"], ["link", "Link"]].map(([k, l]) => `<button type="button" data-imp="${k}" class="${m === k ? "on" : ""}">${l}</button>`).join("");
+  $("#impPaste").hidden = m !== "paste"; $("#impLink").hidden = m !== "link";
+}
+$("#impMode").addEventListener("click", e => { const b = e.target.closest("[data-imp]"); if (b) { CAL.imp.mode = b.dataset.imp; paintImport(); } });
+$("#impRead").addEventListener("click", () => {
+  const res = parsePaste($("#impText").value); CAL.imp.parsed = res;
+  if (!res.events.length) { $("#impPrev").innerHTML = `<p class="hint">VEX couldn’t find any times in that. Each line needs a day or date and a time, like “Monday 8:25-9:15 Math”.</p>`; $("#impAdd").hidden = true; return; }
+  const weekly = res.events.filter(e => e.rrule).length;
+  $("#impPrev").innerHTML = `<p class="hint"><b>Found ${plural(res.events.length, "event")}</b>${weekly ? `, ${weekly} repeating every week` : ""}.</p><div class="group">` + res.events.slice(0, 8).map(e => `<div class="ag" style="--c:${catOf(e.cat).color}"><span class="ag-t">${e.rrule ? esc(dayName(e.start)) : esc(new Date(e.start).toLocaleDateString([], { day: "numeric", month: "short" }))}</span><span class="ag-b"><b>${esc(e.title)}</b><small>${e.allDay ? "All day" : hm(e.start) + "–" + hm(e.end)}${e.location ? " · " + esc(e.location) : ""}</small></span></div>`).join("") + (res.events.length > 8 ? `<p class="hint" style="padding:8px 12px">and ${res.events.length - 8} more</p>` : "") + `</div>`;
+  $("#impAdd").hidden = false;
+});
+$("#impAdd").addEventListener("click", () => {
+  const res = CAL.imp.parsed; if (!res) return; const src = uid("paste:");
+  S.cal.events.push(...res.events.map(e => ({ ...e, id: uid("e"), source: src })));
+  closeSheets(); CAL.view = "day"; CAL.scrolled = false; afterCalChange(); toast(`${plural(res.events.length, "event")} added to your calendar`, () => { S.cal.events = S.cal.events.filter(e => e.source !== src); afterCalChange(); });
+});
+$("#impSub").addEventListener("click", async () => {
+  const url = $("#impUrl").value.trim(); if (!/^(https?|webcals?):\/\//i.test(url)) { $("#impUrlNote").textContent = "Paste the full link, starting with https:// or webcal://"; return; }
+  const btn = $("#impSub"); btn.disabled = true; btn.textContent = "Loading…";
+  const sub = { id: uid("s"), url, name: $("#impName").value.trim() || (url.includes("google") ? "Google Calendar" : url.includes("smartschool") ? "Smartschool" : url.includes("outlook") || url.includes("office") ? "Outlook" : "Calendar"), lastSync: 0 };
+  const ok = await refreshSub(sub, true); btn.disabled = false; btn.textContent = "Add calendar";
+  if (!ok) { $("#impUrlNote").textContent = NATIVE ? "Couldn’t load that link. Check that it’s the iCal (.ics) link." : "This version can’t load calendar links. Use the VEX app, or paste the calendar instead."; return; }
+  S.cal.subs.push(sub); closeSheets(); CAL.view = "day"; CAL.scrolled = false; afterCalChange(); toast(`${sub.name} added, ${plural(sub.count, "event")}`);
+});
+
+/* ---------- clicks in the calendar ---------- */
+$("#listBody").addEventListener("click", e => {
+  if (S.tab !== "cal") return;
+  const b = e.target.closest("[data-cal]"); if (!b) return;
+  const [k, a, extra] = b.dataset.cal.split(":"), now = Date.now();
+  if (k === "view") { CAL.view = a; CAL.scrolled = false; render(); }
+  else if (k === "day") { CAL.day = +a; render(); }
+  else if (k === "week") { CAL.day = addDays(CAL.day, 7 * +a); render(); }
+  else if (k === "today") { CAL.day = dayStart(now); CAL.scrolled = false; render(); }
+  else if (k === "ev") openEvent(a);
+  else if (k === "plan") openPlanItem(a);
+  else if (k === "goal") a === "new" ? openGoal(null) : openGoal(a);
+  else if (k === "replan") { const r = planWeek(); save(); render(); toast(r.placed ? `Replanned. ${plural(r.placed, "session")} placed.` : "Your plan is up to date"); }
+  else if (k === "import") openImport();
+  else if (k === "qa") { const qa = $("#qaInput"); if (qa.value.trim()) { quickAdd(qa.value); qa.value = ""; paintQuickPreview(); } else qa.focus(); }
+  else if (k === "tip") { const g = S.cal.goals.find(x => x.cat === "gaming"); quickAdd(`${g ? g.name : "Gaming"} ${fmtDur(g ? g.minutes : 60).replace(" ", "")} tonight`); }
+  else if (k === "unsub") { S.cal.subs = S.cal.subs.filter(s => s.id !== a); S.cal.events = S.cal.events.filter(ev => ev.source !== "sub:" + a); afterCalChange(); toast("Calendar removed"); }
+  else if (k === "unpaste") { const src = `${a}:${extra}`; const removed = S.cal.events.filter(ev => ev.source === src); S.cal.events = S.cal.events.filter(ev => ev.source !== src); afterCalChange(); toast("Pasted calendar removed", () => { S.cal.events.push(...removed); afterCalChange(); }); }
+  else if (k === "tl" && e.target === b) {
+    const y = e.clientY - b.getBoundingClientRect().top, m = Math.round(((+b.dataset.h0) * 60 + y / 56 * 60) / 30) * 30;
+    openEvent(null, atMin(+b.dataset.day, Math.min(m, 23 * 60 + 30)));
+  }
+});
+$("#listBody").addEventListener("input", e => { if (e.target.id === "qaInput") paintQuickPreview(); });
+$("#listBody").addEventListener("keydown", e => { if (e.target.id === "qaInput" && e.key === "Enter") { e.preventDefault(); if (e.target.value.trim()) { quickAdd(e.target.value); const qa = $("#qaInput"); if (qa) qa.value = ""; paintQuickPreview(); } } });
+$("#listBody").addEventListener("change", e => {
+  const s = e.target.closest("[data-calset]"); if (!s || S.tab !== "cal") return;
+  S.cal.settings[s.dataset.calset] = +s.value; afterCalChange(); toast("Planner updated");
+});
+
+/* ---------- from an email ---------- */
+function calFromMail(m, planIt) {
+  const dt = dateOf(m); if (!dt) return;
+  if (planIt) {
+    const g = { id: uid("g"), name: m.subject.replace(/^(re|fw|fwd):\s*/i, "").slice(0, 60), cat: "study", minutes: 60, perWeek: 0, when: "any", deadline: dt.date.getTime(), totalMinutes: 120, fromMail: m.id };
+    S.cal.goals.push(g); const r = planWeek(); save(); render();
+    toast(r.missing.length ? "Not enough free time before the deadline. Check the Plan tab." : `Planned 2 hours before ${dayWord(dayStart(dt.date))}`, () => { S.cal.goals = S.cal.goals.filter(x => x.id !== g.id); S.cal.plan = S.cal.plan.filter(p => p.goalId !== g.id); save(); render(); });
+    return;
+  }
+  const start = dt.hasTime ? dt.date.getTime() : dayStart(dt.date), ev = { id: uid("e"), title: m.subject.replace(/^(re|fw|fwd):\s*/i, ""), start, end: dt.hasTime ? start + H : addDays(start, 1), allDay: !dt.hasTime, cat: guessCat(`${m.subject} ${m.body}`), source: "email", mailId: m.id };
+  S.cal.events.push(ev); afterCalChange();
+  toast(`Added to your calendar, ${dayWord(dayStart(start))}${dt.hasTime ? " " + hm(start) : ""}`, () => { S.cal.events = S.cal.events.filter(x => x.id !== ev.id); afterCalChange(); });
+}
+window.VEXCAL = { parsePaste, parseICS, quickParse, planWeek, occurrences, dayItems, freeSlots, busyFor };
 
 /* ================= predictive search (on-device, learns from what you pick) ================= */
 const STOP = new Set("the and for you your are was were with that this have has had not but from they them their there what when where which will would can could should just about into than then also our out get got its im ill youre were lets let know thanks hello hey hi dear yes yep any all one two new our here".split(" "));
@@ -1667,7 +2474,7 @@ function openCompose(o = {}) {
   setTimeout(() => { const f = !cTo.value ? cTo : cBody; f.focus(); if (f === cBody) cBody.setSelectionRange(cBody.value.length, cBody.value.length); updatePredict(); }, 320);
 }
 $("#draftLine").addEventListener("click", e => { if (e.target.id === "draftDiscard") { S.draft = null; save(); openCompose({ fresh: true }); toast("Draft discarded"); } });
-$("#composeBtn").addEventListener("click", () => openCompose());
+$("#composeBtn").addEventListener("click", () => S.tab === "cal" ? openEvent(null) : openCompose());
 const validEmail = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 function collect() { return { to: cTo.value.trim(), subject: cSubject.value.trim(), body: cBody.value.trim(), replyTo: C.replyTo, track: $("#cTrack").checked, from: $("#cFrom").hidden ? null : $("#cFrom").value }; }
 function composeError(msg, el) { $("#draftLine").innerHTML = `<span style="color:var(--red-text)">${esc(msg)}</span>`; el && el.focus(); }
@@ -1719,26 +2526,33 @@ const PROVIDERS = {
   gmail: { label: "Gmail", imap: "imap.gmail.com", smtp: "smtp.gmail.com", smtpPort: 465, sec: "ssl", hint: "Gmail needs an <b>app password</b>, not your normal password. Turn on 2-Step Verification in your Google account, then create an app password and paste it here.", link: ["https://myaccount.google.com/apppasswords", "Create a Gmail app password"] },
   yahoo: { label: "Yahoo", imap: "imap.mail.yahoo.com", smtp: "smtp.mail.yahoo.com", smtpPort: 465, sec: "ssl", hint: "Yahoo needs an <b>app password</b>. Create one in your Yahoo account’s security settings and paste it here.", link: ["https://login.yahoo.com/account/security", "Open Yahoo security settings"] },
   icloud: { label: "iCloud", imap: "imap.mail.me.com", smtp: "smtp.mail.me.com", smtpPort: 587, sec: "starttls", hint: "iCloud needs an <b>app-specific password</b>. Create one in your Apple account and paste it here.", link: ["https://account.apple.com", "Open your Apple account"] },
+  hotmail: { label: "Hotmail", info: true, hint: "Microsoft stopped letting mail apps sign in to Hotmail and Outlook with a password, even an app password. Until VEX has its own Microsoft sign-in, you can still read your Hotmail in VEX by forwarding it to your Gmail:" },
   other: { label: "Other", imap: "", smtp: "", smtpPort: 465, sec: "ssl", hint: "Enter your provider’s mail servers. Use an app password if your provider offers one." }
 };
+const MS_DOMAIN = /@(hotmail|outlook|live|msn|passport)\.[a-z.]+$/i;
+const HOTMAIL_STEPS = `<ol class="steps"><li>Open <a href="https://outlook.live.com/mail/">outlook.com</a> and sign in.</li><li>Click the gear, then <b>Mail</b>, then <b>Forwarding</b>.</li><li>Turn on <b>Enable forwarding</b>, enter your Gmail address, and tick <b>Keep a copy of forwarded messages</b>.</li><li>Click <b>Save</b>. New Hotmail emails now show up in VEX through your Gmail.</li></ol><p class="hint">Replies you send from VEX come from your Gmail address.</p>`;
 let prov = "gmail";
 const errLine = m => `<span style="color:var(--red-text)">${esc(m)}</span>`;
 function paintConnect() {
   const p = PROVIDERS[prov];
   $("#provSeg").innerHTML = Object.entries(PROVIDERS).map(([k, v]) => `<button type="button" data-prov="${k}" class="${k === prov ? "on" : ""}">${v.label}</button>`).join("");
-  $("#provHint").innerHTML = p.hint + (p.link ? ` <a href="${p.link[0]}">${p.link[1]}</a>` : "") + `<small>Outlook and Hotmail need Microsoft’s own sign-in, which VEX doesn’t support yet. Your password is saved only on this ${DEVICE}.</small>`;
+  $("#provHint").innerHTML = p.info ? p.hint + HOTMAIL_STEPS : p.hint + (p.link ? ` <a href="${p.link[0]}">${p.link[1]}</a>` : "") + `<small>Your password is saved only on this ${DEVICE}.</small>`;
   $("#mServer").hidden = prov !== "other";
+  ["#mEmail", "#mPass", "#mConnect", "#mStatus"].forEach(sel => { $(sel).hidden = !!p.info; });
 }
 function openConnect() {
   if (!NATIVE) { toast("Connecting your email works in the VEX Android app"); return; }
   paintConnect(); $("#mStatus").textContent = ""; $("#connectTitle").textContent = LIVE ? "Add an email" : "Connect your email"; $("#mEmail").value = ""; $("#mPass").value = ""; openSheet("#connectSheet"); setTimeout(() => $("#mEmail").focus(), 320);
 }
+$("#mEmail").addEventListener("input", () => { const v = $("#mEmail").value.trim(); $("#mStatus").innerHTML = MS_DOMAIN.test(v) ? `<span>That’s a Microsoft address. <button type="button" class="linkbtn" id="toHotmail">See how to add Hotmail</button></span>` : ""; });
+$("#mStatus").addEventListener("click", e => { if (e.target.id === "toHotmail") { prov = "hotmail"; paintConnect(); } });
 $("#provSeg").addEventListener("click", e => { const btn = e.target.closest("[data-prov]"); if (btn) { prov = btn.dataset.prov; paintConnect(); } });
 $("#mConnect").addEventListener("click", async () => {
   const p = PROVIDERS[prov], st = $("#mStatus"), btn = $("#mConnect");
   const email = $("#mEmail").value.trim(), password = $("#mPass").value.replace(/\s+/g, "");
   const imapHost = prov === "other" ? $("#mImap").value.trim() : p.imap, smtpHost = prov === "other" ? $("#mSmtp").value.trim() : p.smtp;
   if (!validEmail(email)) { st.innerHTML = errLine("Enter your full email address."); return; }
+  if (MS_DOMAIN.test(email)) { prov = "hotmail"; paintConnect(); return; }
   if (!password) { st.innerHTML = errLine("Paste your app password."); return; }
   if (!imapHost || !smtpHost) { st.innerHTML = errLine("Enter both mail servers."); return; }
   btn.disabled = true; btn.textContent = "Connecting…"; st.textContent = "This can take a few seconds.";
@@ -1878,6 +2692,7 @@ function adopt(d) {
   S.draft = st.draft || null;
   if (Array.isArray(st.learn)) S.learn = Object.fromEntries(st.learn);
   if (st.stats) S.stats = st.stats;
+  if (st.cal) { const subEv = S.cal.events.filter(e => String(e.source || "").startsWith("sub:")); S.cal = Object.assign(S.cal, st.cal, { events: (st.cal.events || []).concat(subEv) }); }
   if (st.prefs) S.prefs = Object.assign({}, S.prefs, st.prefs, keepLocal);
   store.set(KEY, stateSnapshot()); applyPrefs(); dateMemo.clear();
   if (S.openId && !byId(S.openId)) closeMail();
@@ -1885,7 +2700,8 @@ function adopt(d) {
 }
 function payload() {
   const { size, density, gateSeen, syncWanted, ...shared } = S.prefs;
-  return { v: 3, src: Sync.src, updatedAt: Date.now(), state: { mails: S.mails, incoming: S.incoming, sent: S.sent, scheduled: S.scheduled, draft: S.draft, recent: S.recent, learn: Object.entries(S.learn), stats: S.stats, prefs: shared } };
+  const cal = { ...S.cal, events: S.cal.events.filter(e => !String(e.source || "").startsWith("sub:")) };
+  return { v: 3, src: Sync.src, updatedAt: Date.now(), state: { cal, mails: S.mails, incoming: S.incoming, sent: S.sent, scheduled: S.scheduled, draft: S.draft, recent: S.recent, learn: Object.entries(S.learn), stats: S.stats, prefs: shared } };
 }
 async function pushNow() {
   if (!Sync.ref || Sync.status === "off") return;
@@ -1973,6 +2789,7 @@ window.vexBack = () => {
   if (S.openId) { closeMail(); return true; }
   if (S.selecting) { stopSelect(); return true; }
   if (S.search.active) { closeSearch(); return true; }
+  if (S.tab === "cal" && CAL.view !== "day") { CAL.view = "day"; render(); return true; }
   if (S.tab !== "inbox") { S.tab = "inbox"; render(); return true; }
   return false;
 };
@@ -2008,11 +2825,14 @@ function tick() {
   else if (sent) save();
 }
 $("#refreshBtn").addEventListener("click", () => syncInbox(true));
+/* the page itself never scrolls; only the inbox, emails and sheets do */
+["scroll"].forEach(ev => { document.body.addEventListener(ev, () => { if (document.body.scrollTop) document.body.scrollTop = 0; }, { passive: true }); $("#app").addEventListener(ev, () => { if ($("#app").scrollTop) $("#app").scrollTop = 0; }, { passive: true }); });
 applyPrefs(); buildIndex(); render(); tick();
 if (isWide()) paintIdle();
 setInterval(tick, 20000);
 if (LIVE) { syncInbox(false); setInterval(() => { if (!document.hidden) syncInbox(false); }, 120000); }
 setTimeout(maybeCheckForUpdate, 3000);
+setTimeout(() => refreshSubsIfStale(), 2500);
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 function finishLaunch() { $("#launch").classList.add("gone"); $("#launch").setAttribute("aria-hidden", "true"); }
 /* home-screen install for the phone app */

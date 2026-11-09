@@ -8,5 +8,5 @@ contextBridge.exposeInMainWorld("VexNative", {
   removeAccount: id => ipcRenderer.sendSync("vex:removeAccount", id),
   disconnect: () => ipcRenderer.sendSync("vex:disconnect"),
   connect: call("connect"), fetch: call("fetch"), setFlags: call("setFlags"), move: call("move"), send: call("send"),
-  checkUpdate: call("checkUpdate"), installUpdate: call("installUpdate")
+  checkUpdate: call("checkUpdate"), installUpdate: call("installUpdate"), httpGet: call("httpGet")
 });

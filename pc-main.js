@@ -127,12 +127,26 @@ handle("send", async o => {
   return {};
 });
 
+/* Calendar links (.ics) for the calendar's subscriptions */
+handle("httpGet", async o => {
+  const url = String(o.url || "").replace(/^webcals?:\/\//i, "https://");
+  const r = await fetch(url, { headers: { "User-Agent": "VEX-Mail" } });
+  if (!r.ok) throw new Error(`The calendar link answered ${r.status}`);
+  return { text: (await r.text()).slice(0, 4000000) };
+});
+
 /* Updates: the newest VEX-Setup.exe from GitHub Releases */
 handle("checkUpdate", async o => {
-  const r = await fetch(`https://api.github.com/repos/${o.repo}/releases/latest`, { headers: { "User-Agent": "VEX-Mail", Accept: "application/vnd.github+json" } });
+  const r = await fetch(`https://api.github.com/repos/${o.repo}/releases?per_page=20`, { headers: { "User-Agent": "VEX-Mail", Accept: "application/vnd.github+json" } });
   if (!r.ok) throw new Error(`GitHub answered ${r.status}`);
-  const rel = await r.json(), asset = (rel.assets || []).find(x => /\.exe$/i.test(x.name));
-  return { current: BUILD, latest: Number(String(rel.tag_name || "").replace(/\D/g, "")) || 0, url: asset ? asset.browser_download_url : "" };
+  let best = null;  // newest release that has the PC installer in it (Android releases are skipped)
+  for (const rel of await r.json()) {
+    if (rel.draft || rel.prerelease) continue;
+    const exe = (rel.assets || []).find(x => /\.exe$/i.test(x.name)); if (!exe) continue;
+    const n = Number(String(rel.tag_name || "").replace(/\D/g, "")) || 0;
+    if (!best || n > best.n) best = { n, url: exe.browser_download_url };
+  }
+  return { current: BUILD, latest: best ? best.n : 0, url: best ? best.url : "" };
 });
 handle("installUpdate", async o => {
   const r = await fetch(o.url, { headers: { "User-Agent": "VEX-Mail" } });
