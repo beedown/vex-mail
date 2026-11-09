@@ -16,7 +16,8 @@ The phone and PC apps check these releases for updates by themselves.
 | File | What it is |
 | --- | --- |
 | `index.html` | The whole VEX app (shared by Android and PC) |
-| `MainActivity.java`, `MailBridge.java`, `AndroidManifest.xml`, `app-build.gradle`, `project-build.gradle`, `settings.gradle`, `gradle.properties`, `vex.keystore` | The Android app |
+| `MainActivity.java`, `MailBridge.java`, `Mail.java`, `MailCheckJob.java`, `ReminderReceiver.java`, `AttachmentProvider.java`, `VexWidget.java`, `widget-layout.xml`, `widget-info.xml`, `AndroidManifest.xml`, `app-build.gradle`, `project-build.gradle`, `settings.gradle`, `gradle.properties`, `vex.keystore` | The Android app |
+| `microsoft-client-id.txt` (optional) | Turns on Sign in with Microsoft for Hotmail and Outlook (see below) |
 | `pc-main.js`, `pc-preload.js`, `pc-package.json` | The Windows app |
 | `icon-*.png`, `apple-touch-icon.png`, `manifest.webmanifest`, `sw.js` | Icons and the web version |
 | `README.md`, `PRIVACY.md`, `BUILDING.md` | These pages |
@@ -31,6 +32,20 @@ Keep `vex.keystore` the same forever: Android only accepts updates signed with t
 3. Open **Actions** and wait for the green check (about 10 minutes).
 
 A red ✗ means a build failed. Click it, click the part with the ✗ (android, pc or release), then the step with the ✗, and copy the error.
+
+## Turn on Sign in with Microsoft (one time)
+
+Microsoft only lets registered apps sign in to Hotmail and Outlook, so VEX needs to be registered once. It's free, but Microsoft asks for an Azure account, and signing up for one asks for a card to check who you are (you're not charged). A parent can do this part.
+
+1. Sign up for a free Azure account, then open portal.azure.com.
+2. Search for **App registrations** and click **New registration**.
+3. Name it **VEX**. Under supported account types, pick the option that includes **personal Microsoft accounts**. Under Redirect URI, choose **Public client/native (mobile & desktop)** and enter `vexmail://auth`. Click **Register**.
+4. Open **Authentication**. Under the mobile and desktop platform, add a second redirect URI: `http://localhost`. Click **Save**.
+5. Open **API permissions**, click **Add a permission**, then **Microsoft Graph**, then **Delegated permissions**. Tick **IMAP.AccessAsUser.All**, **SMTP.Send**, **offline_access**, **openid** and **email**, and add them.
+6. Open **Overview** and copy the **Application (client) ID**.
+7. In this repository, click **Add file**, then **Create new file**. Name it `microsoft-client-id.txt`, paste the ID as the only text, and commit.
+
+The next build has a **Sign in with Microsoft** button on the Hotmail tab, for everyone who uses VEX.
 
 ## Optional: the web version
 
@@ -58,7 +73,7 @@ jobs:
 
       - name: Check the VEX files are in the right place
         run: |
-          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
+          for f in index.html icon-maskable-512.png vex.keystore MainActivity.java MailBridge.java Mail.java MailCheckJob.java ReminderReceiver.java AttachmentProvider.java VexWidget.java widget-layout.xml widget-info.xml AndroidManifest.xml app-build.gradle project-build.gradle settings.gradle gradle.properties; do
             if [ ! -f "$f" ]; then
               echo "::error::$f is missing from the top of the repository. Upload all the VEX files, not the folder they are in."
               exit 1
@@ -86,14 +101,25 @@ jobs:
       - name: Put the Android project together
         run: |
           set -e
+          if [ -f microsoft-client-id.txt ]; then
+            ID=$(tr -d ' \r\n\t' < microsoft-client-id.txt)
+            if echo "$ID" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'; then
+              sed -i "s/__MS_CLIENT_ID__/$ID/g" index.html
+              echo "Sign in with Microsoft is on"
+            else
+              echo "::warning::microsoft-client-id.txt doesn't contain a Client ID, so Sign in with Microsoft stays off"
+            fi
+          fi
           A=android/app/src/main
-          mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26"
+          mkdir -p "$A/java/com/vexmail/app" "$A/assets" "$A/res/drawable-nodpi" "$A/res/mipmap-anydpi-v26" "$A/res/layout" "$A/res/xml"
           cp settings.gradle gradle.properties android/
           cp project-build.gradle android/build.gradle
           cp app-build.gradle android/app/build.gradle
           cp vex.keystore android/app/vex.keystore
           cp AndroidManifest.xml "$A/AndroidManifest.xml"
-          cp MainActivity.java MailBridge.java "$A/java/com/vexmail/app/"
+          cp *.java "$A/java/com/vexmail/app/"
+          cp widget-layout.xml "$A/res/layout/vex_widget.xml"
+          cp widget-info.xml "$A/res/xml/vex_widget_info.xml"
           cp index.html "$A/assets/index.html"
           cp icon-maskable-512.png "$A/res/drawable-nodpi/vex_foreground.png"
           cat > "$A/res/mipmap-anydpi-v26/ic_launcher.xml" <<'EOF'
@@ -134,6 +160,15 @@ jobs:
           for f in index.html icon-512.png pc-main.js pc-preload.js pc-package.json; do
             if [ ! -f "$f" ]; then echo "::error::$f is missing from the top of the repository."; exit 1; fi
           done
+          if [ -f microsoft-client-id.txt ]; then
+            ID=$(tr -d ' \r\n\t' < microsoft-client-id.txt)
+            if echo "$ID" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'; then
+              sed -i "s/__MS_CLIENT_ID__/$ID/g" index.html
+              echo "Sign in with Microsoft is on"
+            else
+              echo "::warning::microsoft-client-id.txt doesn't contain a Client ID, so Sign in with Microsoft stays off"
+            fi
+          fi
           mkdir -p pc-app
           cp index.html pc-app/index.html
           cp icon-512.png pc-app/icon.png

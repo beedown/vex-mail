@@ -7,6 +7,9 @@ contextBridge.exposeInMainWorld("VexNative", {
   appBuild: () => ipcRenderer.sendSync("vex:appBuild"),
   removeAccount: id => ipcRenderer.sendSync("vex:removeAccount", id),
   disconnect: () => ipcRenderer.sendSync("vex:disconnect"),
-  connect: call("connect"), fetch: call("fetch"), setFlags: call("setFlags"), move: call("move"), send: call("send"),
-  checkUpdate: call("checkUpdate"), installUpdate: call("installUpdate"), httpGet: call("httpGet")
+  setTray: on => ipcRenderer.sendSync("vex:setTray", on),
+  connect: call("connect"), oauth: call("oauth"), fetch: call("fetch"), message: call("message"), folders: call("folders"), search: call("search"),
+  attachment: call("attachment"), setFlags: call("setFlags"), move: call("move"), send: call("send"),
+  httpGet: call("httpGet"), httpPost: call("httpPost"), syncPut: call("syncPut"), syncGet: call("syncGet"),
+  checkUpdate: call("checkUpdate"), installUpdate: call("installUpdate")
 });

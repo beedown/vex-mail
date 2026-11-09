@@ -10,6 +10,8 @@ VEX is made by beedown. In short: VEX has no servers and no ads, it doesn't trac
 
 When you connect an email address, you give VEX the address and an app password. They're saved only on your device: on Android in VEX's private app storage, which isn't included in phone backups, and on Windows encrypted with Windows' own protection. VEX uses them only to connect straight to your email provider, like Gmail or Yahoo, over an encrypted connection. Remove an account in Settings and its password is deleted.
 
+If you use Sign in with Microsoft for Hotmail or Outlook, you sign in on Microsoft's own page and VEX never sees your Microsoft password. Microsoft gives VEX a sign-in key, which is saved on your device the same way as a password.
+
 ### Your emails
 
 VEX downloads your newest emails straight from your provider and keeps a copy on your device so it can show them, sort them and search them. Reading, starring, archiving, deleting and sending go straight to your provider. Your emails are never sent anywhere else.
@@ -18,10 +20,24 @@ VEX downloads your newest emails straight from your provider and keeps a copy on
 
 Your calendar, plans and settings are saved on your device. If you add a calendar link, VEX downloads that calendar straight from the link's address.
 
+### Phone and PC sync
+
+If you turn on sync, VEX saves your calendar, plans and settings as one email in a folder called "VEX Sync" in your own mailbox, so your other device can read it. It never goes to any other server. Turn sync off and delete that folder to remove it.
+
+### Pictures, trackers and unsubscribing
+
+VEX removes tracking pixels from emails. Other pictures only load when you choose to show them, and then they come from the sender's servers, which can see your device's internet address. When you tap Unsubscribe, VEX contacts the sender's unsubscribe address for you.
+
+### Alerts, the widget and app lock
+
+On Android, VEX checks for new mail in the background to send alerts and keep the home screen widget up to date. The widget shows counts and your next event on your home screen. If you lock VEX, your PIN is saved only as a scrambled code on your device, and fingerprints are handled by Android, so VEX never receives them.
+
 ### Who VEX talks to
 
 - Your email providers, to get and send your mail.
+- Microsoft's sign-in service, if you use Sign in with Microsoft.
 - Calendar links you add.
+- Senders' websites, only when you show pictures or unsubscribe.
 - GitHub, to check for and download VEX updates.
 - Google Fonts, to load VEX's fonts.
 
