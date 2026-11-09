@@ -11,6 +11,10 @@ Every inbox in one place, sorted by what needs you.
 
 Red ✗? Click it, click **apk**, then the step with the ✗, and send a screenshot to Claude.
 
+## VEX for PC
+
+Every build also makes **VEX-Setup.exe** for Windows. Download it from this repository's **Releases** page and open it. If Windows shows "Windows protected your PC", click **More info**, then **Run anyway**. VEX installs, opens, and adds itself to your Start menu and desktop. Connect your email in **Settings**; you can use the same app password as on your phone. The PC version updates itself too.
+
 ## Several email addresses
 
 In VEX, open **Settings** and tap **Add email** to connect another address. Tap **Edit** next to any address to give it a name, like Work or School, and a color. Use the inbox button at the top to see one address at a time, and pick which address to send from when you write.
@@ -32,7 +36,7 @@ Outlook and Hotmail aren't supported yet. Your password is saved only on your ph
 ## The build file
 
 ```yaml
-name: Build the VEX Android app
+name: Build VEX for Android and PC
 
 on:
   push:
@@ -43,7 +47,7 @@ permissions:
   contents: write
 
 jobs:
-  apk:
+  android:
     runs-on: ubuntu-latest
     steps:
       - name: Get the VEX files
@@ -96,20 +100,77 @@ jobs:
               <foreground android:drawable="@drawable/vex_foreground" />
           </adaptive-icon>
           EOF
-          echo "Android project ready"
 
       - name: Build the APK
         working-directory: android
         run: gradle assembleRelease --no-daemon --stacktrace
 
-      - name: Name the file VEX.apk
+      - name: Keep VEX.apk for the release
         run: cp android/app/build/outputs/apk/release/app-release.apk VEX.apk
 
-      - name: Publish VEX.apk as a download
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: VEX.apk
+
+  pc:
+    runs-on: windows-latest
+    steps:
+      - name: Get the VEX files
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Put the PC app together
+        shell: bash
+        run: |
+          set -e
+          for f in index.html icon-512.png pc-main.js pc-preload.js pc-package.json; do
+            if [ ! -f "$f" ]; then echo "::error::$f is missing from the top of the repository."; exit 1; fi
+          done
+          mkdir -p pc-app
+          cp index.html pc-app/index.html
+          cp icon-512.png pc-app/icon.png
+          cp pc-main.js pc-app/main.js
+          cp pc-preload.js pc-app/preload.js
+          cp pc-package.json pc-app/package.json
+          echo "{\"build\": ${GITHUB_RUN_NUMBER}}" > pc-app/build-number.json
+
+      - name: Build VEX-Setup.exe
+        working-directory: pc-app
+        shell: bash
+        run: |
+          npm install --no-audit --no-fund
+          npx electron-builder --win nsis --publish never -c.extraMetadata.version=1.${GITHUB_RUN_NUMBER}.0
+
+      - name: Keep VEX-Setup.exe for the release
+        shell: bash
+        run: cp pc-app/dist/VEX-Setup.exe VEX-Setup.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pc
+          path: VEX-Setup.exe
+
+  release:
+    needs: [android, pc]
+    if: ${{ always() && (needs.android.result == 'success' || needs.pc.result == 'success') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+
+      - name: Publish the downloads
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: VEX build ${{ github.run_number }}
-          body: Open this page on your Android phone, tap VEX.apk below, then open the file to install VEX.
-          files: VEX.apk
+          body: "Phone: tap VEX.apk on your Android phone. Computer: download VEX-Setup.exe on your Windows PC."
+          files: out/*
+          fail_on_unmatched_files: false
 ```

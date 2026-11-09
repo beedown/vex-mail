@@ -1,0 +1,24 @@
+{
+  "name": "vex-mail",
+  "productName": "VEX",
+  "version": "1.0.0",
+  "description": "VEX Mail for PC",
+  "author": "VEX",
+  "main": "main.js",
+  "dependencies": {
+    "imapflow": "^1.0.160",
+    "mailparser": "^3.7.1",
+    "nodemailer": "^6.9.14"
+  },
+  "devDependencies": {
+    "electron": "31.7.7",
+    "electron-builder": "24.13.3"
+  },
+  "build": {
+    "appId": "com.vexmail.pc",
+    "productName": "VEX",
+    "files": ["main.js", "preload.js", "index.html", "icon.png", "build-number.json", "package.json"],
+    "win": { "target": "nsis", "icon": "icon.png" },
+    "nsis": { "oneClick": true, "perMachine": false, "artifactName": "VEX-Setup.${ext}", "shortcutName": "VEX" }
+  }
+}
